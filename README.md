@@ -1,2 +1,2 @@
 # TTCheckinSystem
-This is an automatic checkin system
+This is an automatic ch
