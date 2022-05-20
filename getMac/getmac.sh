@@ -3,6 +3,7 @@
 #get IP Mac informations
 arp -d -a # sudo run
 sleep 600
+cd getMac
 touch macAdrs.txt
 command arp -a > macAdrs.txt
 
