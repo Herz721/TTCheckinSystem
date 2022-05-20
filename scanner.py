@@ -1,11 +1,13 @@
 import scapy.all as scapy
 import time
 import subprocess
+from db_table import db_table
 
 class Scanner():
-    def __init__(self, network = "10.0.0.61/24", interval = 30):
+    def __init__(self, network = "10.0.0.61/24"):
         self.network = network
-        self.interval = interval  # seconds
+        self.time = interval  # seconds
+
 
 
     def scan(self):
@@ -16,38 +18,13 @@ class Scanner():
         answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0]
         # src = mac address; psrc = ip address; dst = local mac address; pdst = local ip address
         for host in answered_list:
-            macList.add(host[1].src)
-        return macList
+            macList.add(host[1].psrc)
 
-    def connection_change(hosts, action):
-        if action not in ("connected", "disconnected"):
-            raise ValueError(f"Invalid action: {action}")
-        for host in hosts:
-            device = dictionary[host] if host in dictionary else 'unknown device'
-            if action == 'connected':
-                say = f"echo {device} connected | cscript C:\\Progra~1\\Jampal\\ptts.vbs"
-            else:
-                say = f"echo {device} disconnected | cscript C:\\Progra~1\\Jampal\\ptts.vbs"
-            subprocess.call(say, shell=True, stdout=None, stderr=None)
 
 
 def main():
     scanner = Scanner()
-    old_macs = scanner.scan()
-    for mac in old_macs:
-        print(mac)
-    # connection_change(old_macs, "connected")
-    # while True:
-    #     time.sleep(INTERVAL)
-    #     macs = scan(NETWORK)
-
-    #     new = macs - old_macs
-    #     connection_change(new, "connected")
-
-    #     left = old_macs - macs
-    #     connection_change(left, "disconnected")
-
-    #     old_macs = macs
+    scanner.scan()
 
 
 if __name__ == "__main__":
