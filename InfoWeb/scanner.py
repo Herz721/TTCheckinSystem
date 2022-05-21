@@ -4,7 +4,7 @@ import subprocess
 from db_table import db_table
 
 class Scanner():
-    def __init__(self, network = "10.0.0.61/24", checkpoint):
+    def __init__(self, network = "10.0.0.61/24", checkpoint = 0):
         self.network = network
         self.checkpoint = checkpoint  # seconds
 
@@ -27,3 +27,5 @@ class Scanner():
 if __name__ == "__main__":
     scanner = Scanner()
     macdict = scanner.scan()
+    for mac in macdict:
+        print(mac)
