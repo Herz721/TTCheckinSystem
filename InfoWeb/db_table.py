@@ -37,10 +37,10 @@ class db_table:
         cursor = self.db.cursor()
         try:
             cursor.execute(sql)
-            db.commit()
+            self.db.commit()
             print("Insert Successfully!")
         except:
-            db.rollback()
+            self.db.rollback()
 
     def select(self, sql):
         cursor = self.db.cursor()
@@ -59,7 +59,7 @@ def main():
     db = db_table()
     create_Employee_Table = """
     CREATE TABLE EMPLOYEE (
-        EID INT PRIMARY KEY,
+        EID INT AUTO_INCREMENT PRIMARY KEY,
         ENAME VARCHAR(64) NOT NULL,
         MAC VARCHAR(32),
         IP VARCHAR(32) NOT NULL,
@@ -69,7 +69,7 @@ def main():
     db.create(create_Employee_Table)
     create_Record_Table = """
     CREATE TABLE CLOCKRECORDS (
-        RID INT PRIMARY KEY,
+        RID INT AUTO_INCREMENT PRIMARY KEY,
         EID INT NOT NULL,
         CHECKPOINT INT NOT NULL,
         RDATE DATE NOT NULL,
