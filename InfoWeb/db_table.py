@@ -33,51 +33,81 @@ class db_table:
         except:
             print("Table Create Unsuccessfully!")
 
-    def insert(self, sql):
+    def insert(self, sql, vals = None):
         cursor = self.db.cursor()
-        try:
-            cursor.execute(sql)
-            self.db.commit()
-            print("Insert Successfully!")
-        except:
-            self.db.rollback()
+        # try:
+        cursor.execute(sql, vals)
+        self.db.commit()
+        print("Insert Successfully!")
+        # except:
+        #     self.db.rollback()
 
-    def select(self, sql):
+    def select(self, sql, vals = None):
         cursor = self.db.cursor()
         try:
-            cursor.execute(sql)
+            cursor.execute(sql, vals)
             results = cursor.fetchall()
             for row in results:
                 print(row)
+            return results
         except:
             print("Error: unable to fetch data")
-    
+
+    def update(self, sql, vals = None):
+        cursor = self.db.cursor()
+        try:
+            cursor.execute(sql, vals)
+            self.db.commit()
+            print("Update Successfully!")
+        except:
+            self.db.rollback()
+
+    def delete(self, sql, vals = None):
+        cursor = self.db.cursor()
+        try:
+            cursor.execute(sql, vals)
+            self.db.commit()
+            print("Delete Successfully!")
+        except:
+            self.db.rollback()
+
+    def alter(self, sql, vals = None):
+        cursor = self.db.cursor()
+        try:
+            cursor.execute(sql, vals)
+            self.db.commit()
+            print("Alter Table Successfully!")
+        except:
+            self.db.rollback()
+        
     def close(self):
         self.db.close()
 
 def main():
     db = db_table()
-    create_Employee_Table = """
-    CREATE TABLE EMPLOYEE (
-        EID INT AUTO_INCREMENT PRIMARY KEY,
-        ENAME VARCHAR(64) NOT NULL,
-        MAC VARCHAR(32),
-        IP VARCHAR(32) NOT NULL,
-        DEVICE VARCHAR(32) NOT NULL
-    )
-    """
-    db.create(create_Employee_Table)
-    create_Record_Table = """
-    CREATE TABLE CLOCKRECORDS (
-        RID INT AUTO_INCREMENT PRIMARY KEY,
-        EID INT NOT NULL,
-        CHECKPOINT INT NOT NULL,
-        RDATE DATE NOT NULL,
-        STATUS INT NOT NULL,
-        FOREIGN KEY (EID) REFERENCES EMPLOYEE (EID) ON DELETE CASCADE ON UPDATE CASCADE
-    )
-    """
-    db.create(create_Record_Table)
+    # create_Employee_Table = """
+    # CREATE TABLE EMPLOYEE (
+    #     EID INT AUTO_INCREMENT PRIMARY KEY,
+    #     ENAME VARCHAR(64) NOT NULL,
+    #     MAC VARCHAR(32),
+    #     IP VARCHAR(32) NOT NULL,
+    #     DEVICE VARCHAR(32) NOT NULL
+    # )
+    # """
+    # db.create(create_Employee_Table)
+    # create_Record_Table = """
+    # CREATE TABLE CLOCKRECORDS (
+    #     RID INT AUTO_INCREMENT PRIMARY KEY,
+    #     EID INT NOT NULL,
+    #     CHECKPOINT TIME NOT NULL,
+    #     RDATE DATE NOT NULL,
+    #     STATUS INT NOT NULL,
+    #     FOREIGN KEY (EID) REFERENCES EMPLOYEE (EID) ON DELETE CASCADE ON UPDATE CASCADE
+    # )
+    # """
+    # db.create(create_Record_Table)
+    db.delete("DELETE FROM CLOCKRECORDS")
+    db.alter("ALTER TABLE CLOCKRECORDS AUTO_INCREMENT = 1;")
     db.close()
 
 

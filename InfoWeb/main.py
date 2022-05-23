@@ -13,9 +13,9 @@ def result():
     name = request.args.get('name')
     device = request.args.get('equipment')
     ip = request.remote_addr
+    vals = (name, device, ip)
     db = db_table()
-    db.insert("INSERT INTO EMPLOYEE (ENAME, IP, DEVICE) VALUES (\""\
-         + name + "\", \"" + ip + "\", \"" + device + "\");")
+    db.insert("INSERT INTO EMPLOYEE (ENAME, IP, DEVICE) VALUES (%s, %s, %s);", vals)
     db.close()
     return name
 
