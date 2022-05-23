@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request
-import pandas as pd
+from flask import Flask, request
+from db_table import db_table
 import os
 
 app = Flask(__name__, static_url_path='')
-COLUMNS = ['name', 'device', 'ip']
 
 
 @app.route('/')
@@ -13,21 +12,13 @@ def init():
 
 @app.route('/result')
 def result():
-    if(os.path.isfile('localStorage.csv')):
-        df = pd.read_csv('localStorage.csv')
-        print(df)
-    else:
-        df = pd.DataFrame(columns=COLUMNS)
-        print(df)
     name = request.args.get('name')
     device = request.args.get('device')
     ip = request.remote_addr
-    print(device)
-    newData = pd.DataFrame(
-        {'name': name, 'device': device, 'ip': ip}, index=[1])
-    df = pd.concat([df, newData], ignore_index=True)
-    df.drop_duplicates(subset=['ip'], keep='last', inplace=True)
-    df.to_csv('localStorage.csv', index=0)
+    vals = (name, device, ip)
+    db = db_table()
+    db.insert("INSERT INTO EMPLOYEE (ENAME, IP, DEVICE) VALUES (%s, %s, %s);", vals)
+    db.close()
     return name
 
 
