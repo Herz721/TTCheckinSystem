@@ -1,9 +1,9 @@
 from flask import Flask, request
+import sys
+sys.path.append("../module")
 from db_table import db_table
-import os
 
 app = Flask(__name__, static_url_path='')
-
 
 @app.route('/')
 def init():
@@ -15,7 +15,7 @@ def result():
     name = request.args.get('name')
     device = request.args.get('device')
     ip = request.remote_addr
-    vals = (name, device, ip)
+    vals = (name, ip, device)
     db = db_table()
     db.insert("INSERT INTO EMPLOYEE (ENAME, IP, DEVICE) VALUES (%s, %s, %s);", vals)
     db.close()

@@ -54,10 +54,6 @@ class Scanner():
             sql = "INSERT INTO CLOCKRECORDS (EID, CHECKPOINT, RDATE, STATUS) VALUES (%s, %s, %s, %s);"
             db.insert(sql, vals)
             db.close()
-        
-
-
-
 
 
 if __name__ == "__main__":
