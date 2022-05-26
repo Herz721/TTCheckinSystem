@@ -1,13 +1,11 @@
 import scapy.all as scapy
-import datetime
-import time
+from datetime import datetime, date
 import subprocess
 from db_table import db_table
 
 class Scanner():
-    def __init__(self, network = "10.0.0.61/24", checkpoint = 0):
+    def __init__(self, network = "10.0.0.61/24"):
         self.network = network
-        self.checkpoint = checkpoint  # seconds
 
     def scan(self):
         ipdict = {}
@@ -24,7 +22,7 @@ class Scanner():
         db = db_table()
         results = db.select("SELECT IP, MAC, EID FROM EMPLOYEE")
         self.updateMac(results, ipdict)
-        self.insertRecord(results, ipdict, datetime.date.today())
+        self.insertRecord(results, ipdict, date.today())
         db.close()
 
         return ipdict
@@ -44,7 +42,8 @@ class Scanner():
                     print("Conflict on MAC Address!")
                     # TODO
 
-    def insertRecord(self, ipResults, ipdict, date, checkpoint = time.strftime("%H:%M:%S", time.localtime())):
+    def insertRecord(self, ipResults, ipdict, date):
+        checkpoint = datetime.now().strftime("%H:%M")
         for result in ipResults:
             if result[0] in ipdict.keys():
                 vals = (result[2], checkpoint, date, 1)
