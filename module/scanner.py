@@ -4,8 +4,9 @@ import subprocess
 from db_table import db_table
 
 class Scanner():
-    def __init__(self, network = "10.0.0.61/24"):
-        self.network = network
+    def __init__(self, network = "192.168.0.62"):
+        self.network = network + "/24"
+        print(self.network)
 
     def scan(self):
         ipdict = {}
@@ -21,16 +22,18 @@ class Scanner():
         # update mac address
         db = db_table()
         results = db.select("SELECT IP, MAC, EID FROM EMPLOYEE")
+        print(self.network)
+        print(results)
+        print(ipdict)
         self.updateMac(results, ipdict)
         self.insertRecord(results, ipdict, date.today())
         db.close()
-
         return ipdict
 
     def updateMac(self, ipResults, ipdict):
         for result in ipResults:
             if result[0] in ipdict.keys():
-                if result[1] is None:
+                if result[1] is None or result[1] == '':
                     db = db_table()
                     sql = "UPDATE EMPLOYEE SET MAC = %s WHERE ip = %s"
                     vals = (ipdict[result[0]], result[0])
@@ -60,3 +63,4 @@ if __name__ == "__main__":
     ipdict = scanner.scan()
     for data in ipdict.items():
         print(data)
+    print(len(ipdict))

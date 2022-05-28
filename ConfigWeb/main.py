@@ -3,22 +3,24 @@ import sys
 sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
+import socket
 
-checkpoints = Checkpoints()
-checkpoints.scheduler.print_jobs()
-checkpoints.scheduler.start()
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
+
+checkpoints = Checkpoints(ip)
 app = Flask(__name__)
 
 @app.route('/')
 def init():
-    return render_template("configPage.html")
+    return render_template("configPage.html", config = checkpoints.config)
 
 
-@app.route('/setTime')
+@app.route('/setTime', methods=['POST'])
 def result():
-    self.config.clockinTime = request.form["clockin"]
-    self.config.clockoutTime = request.form["clockout"]
-    return render_template("configPage.html")
+    print(request.form)
+    checkpoints = Checkpoints(ip, request.form["clockin"], request.form["clockout"])
+    return render_template("configPage.html", config = checkpoints.config)
 
 
 if __name__ == '__main__':
