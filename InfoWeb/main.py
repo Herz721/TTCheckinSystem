@@ -1,9 +1,24 @@
 from flask import Flask, request
 import sys
 sys.path.append("../module")
-from db_table import db_table
+from db_table import EMPLOYEE, CLOCKRECORD
+from scanner import Scanner
+import socket
 
 app = Flask(__name__, static_url_path='')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:********@localhost/TrojanTech'
+db = SQLAlchemy(app)
+
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
+scanner = Scanner(ip)
+
+def findMac(ip, ipdict):
+    if ip in ipdict.keys():
+        return ipdict[ip]
+    else:
+        print("find MAC failure")
+        return ""
 
 @app.route('/')
 def init():
@@ -15,10 +30,16 @@ def result():
     name = request.args.get('name')
     device = request.args.get('device')
     ip = request.remote_addr
-    vals = (name, ip, device)
-    db = db_table()
-    db.insert("INSERT INTO EMPLOYEE (ENAME, IP, DEVICE) VALUES (%s, %s, %s);", vals)
-    db.close()
+    mac = ""
+    while mac == "":
+        ipdict = scanner.findIpDict()
+        print(ipdict)
+        print(len(ipdict))
+        mac = findMac(ip, ipdict)
+    if not db.session.query(EMPLOYEE.query.filter(EMPLOYEE.MAC == mac).exist()).scalar():
+        employee = EMPLOYEE(name, mac, device)
+        db.session.add(employee)
+        db.session.commit()
     return name
 
 

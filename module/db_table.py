@@ -1,115 +1,38 @@
-import mysql.connector
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, Time
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 
-'''
-    Basic Wrapper of MySQL Database
-'''
+Base = declarative_base()
 
-class db_table:
-    def __init__(self, serverName = "localhost", dbUserName = "root", pwd = "********", dbName = "TrojanTech"):
-        self.serverName = serverName
-        self.dbUserName = dbUserName
-        self.pwd = pwd
-        self.dbName = dbName
-        self.db = mysql.connector.connect(
-            host = self.serverName, 
-            user = self.dbUserName, 
-            password = self.pwd,
-            database = self.dbName
-        )
+class EMPLOYEE(Base):
+    __tablename__ = 'EMPLOYEE'
 
-    def connect(self):
-        self.db = mysql.connector.connect(
-            host = self.serverName, 
-            user = self.dbUserName, 
-            password = self.pwd,
-            database = self.dbName
-        )
-    
-    def create(self, sql):
-        try:
-            cursor = self.db.cursor()
-            cursor.execute(sql)
-            print("Table Create Successfully!")
-        except:
-            print("Table Create Unsuccessfully!")
+    EID = Column(Integer, autoincrement=True, primary_key=True)
+    ENAME = Column(String(64), nullable=False)
+    MAC = Column(String(32), nullable=False, unique=True)
+    DEVICE = Column(String(32), nullable=False)
 
-    def insert(self, sql, vals = None):
-        cursor = self.db.cursor()
-        # try:
-        cursor.execute(sql, vals)
-        self.db.commit()
-        print("Insert Successfully!")
-        # except:
-        #     self.db.rollback()
-
-    def select(self, sql, vals = None):
-        cursor = self.db.cursor()
-        try:
-            cursor.execute(sql, vals)
-            results = cursor.fetchall()
-            for row in results:
-                print(row)
-            return results
-        except:
-            print("Error: unable to fetch data")
-
-    def update(self, sql, vals = None):
-        cursor = self.db.cursor()
-        try:
-            cursor.execute(sql, vals)
-            self.db.commit()
-            print("Update Successfully!")
-        except:
-            self.db.rollback()
-
-    def delete(self, sql, vals = None):
-        cursor = self.db.cursor()
-        try:
-            cursor.execute(sql, vals)
-            self.db.commit()
-            print("Delete Successfully!")
-        except:
-            self.db.rollback()
-
-    def alter(self, sql, vals = None):
-        cursor = self.db.cursor()
-        try:
-            cursor.execute(sql, vals)
-            self.db.commit()
-            print("Alter Table Successfully!")
-        except:
-            self.db.rollback()
-        
-    def close(self):
-        self.db.close()
-
-def main():
-    db = db_table()
-    # create_Employee_Table = """
-    # CREATE TABLE EMPLOYEE (
-    #     EID INT AUTO_INCREMENT PRIMARY KEY,
-    #     ENAME VARCHAR(64) NOT NULL,
-    #     MAC VARCHAR(32),
-    #     IP VARCHAR(32) NOT NULL,
-    #     DEVICE VARCHAR(32) NOT NULL
-    # )
-    # """
-    # db.create(create_Employee_Table)
-    # create_Record_Table = """
-    # CREATE TABLE CLOCKRECORDS (
-    #     RID INT AUTO_INCREMENT PRIMARY KEY,
-    #     EID INT NOT NULL,
-    #     CHECKPOINT TIME NOT NULL,
-    #     RDATE DATE NOT NULL,
-    #     STATUS INT NOT NULL,
-    #     FOREIGN KEY (EID) REFERENCES EMPLOYEE (EID) ON DELETE CASCADE ON UPDATE CASCADE
-    # )
-    # """
-    # db.create(create_Record_Table)
-    db.delete("DELETE FROM CLOCKRECORDS")
-    db.alter("ALTER TABLE CLOCKRECORDS AUTO_INCREMENT = 1;")
-    db.close()
+    def __init__(self, name, mac, device):
+        # self.EID = id
+        self.ENAME = name
+        self.MAC = mac
+        self.DEVICE = device
 
 
-if __name__ == "__main__":
-    main()
+class CLOCKRECORD(Base):
+    __tablename__ = 'CLOCKRECORDS'
+
+    RID = Column(Integer, autoincrement=True, primary_key=True)
+    EID = Column(ForeignKey('EMPLOYEE.EID', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    CHECKPOINT = Column(Time, nullable=False)
+    RDATE = Column(Date, nullable=False)
+    STATUS = Column(Integer, nullable=False)
+
+    EMPLOYEE = relationship('EMPLOYEE')
+
+    def __init__(self, eid, checkpoint, rdate, status):
+        # self.RID = rid
+        self.EID = eid
+        self.CHECKPOINT = checkpoint
+        self.RDATE = rdate
+        self.STATUS = status

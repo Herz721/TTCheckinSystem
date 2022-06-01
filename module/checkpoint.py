@@ -9,7 +9,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 
 class Checkpoints:
-    def __init__(self, network, clockin = "9", clockout = "17"):
+    def __init__(self, network, clockin = "9", clockout = "18"):
         self.config = CheckInSystemConfig(time(int(clockin)), time(int(clockout)))
         self.scheduler = BackgroundScheduler({
             'apscheduler.timezone': 'America/Los_Angeles',
