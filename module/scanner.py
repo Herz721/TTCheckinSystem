@@ -1,11 +1,12 @@
 import scapy.all as scapy
 from datetime import datetime, date
 import subprocess
-from db_table import db_table
+from db_table import EMPLOYEE, CLOCKRECORD
 
 class Scanner():
-    def __init__(self, network = "192.168.0.63"):
+    def __init__(self, db, network = "192.168.0.63"):
         self.network = network + "/24"
+        self.db = db
         print(self.network)
 
     def findIpDict(self):
@@ -23,22 +24,20 @@ class Scanner():
     def scan(self):
         ipdict = self.findIpDict()
         # insert checkpoints
-        db = db_table()
-        ipResults = db.select("SELECT MAC, EID FROM EMPLOYEE")
+        ipResults = self.db.session.query(EMPLOYEE).all()
         self.insertRecord(ipResults, ipdict, date.today())
-        db.close()
 
     def insertRecord(self, ipResults, ipdict, date):
         checkpoint = datetime.now().strftime("%H:%M")
         for result in ipResults:
-            if result[0] in ipdict.values():
-                vals = (result[1], checkpoint, date, 1)
+            if result.MAC in ipdict.values():
+                vals = CLOCKRECORD(result.EID, checkpoint, date, 1)
             else:
-                vals = (result[1], checkpoint, date, 0)
-            db = db_table()
-            sql = "INSERT INTO CLOCKRECORDS (EID, CHECKPOINT, RDATE, STATUS) VALUES (%s, %s, %s, %s);"
-            db.insert(sql, vals)
-            db.close()
+                vals = CLOCKRECORD(result.EID, checkpoint, date, 0)
+            self.db.session.add(vals)
+            self.db.session.commit()
+            self.db.session.flush()
+        print(checkpoint + ": insert Successfully!")
 
 
 if __name__ == "__main__":

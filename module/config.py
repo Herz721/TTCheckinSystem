@@ -1,3 +1,5 @@
+from datetime import time
+
 class CheckInSystemConfig:
 
     # min < 60
@@ -10,6 +12,6 @@ class CheckInSystemConfig:
     # WARNING: Cannot set to min, unless modify main.py first
     NON_WORKING_TIME_INTERVAL = 1
 
-    def __init__(self, clockin, clockout):
-        self.clockinTime = clockin
-        self.clockoutTime = clockout
+    def __init__(self, clockin = "9", clockout = "18"):
+        self.clockinTime = time(int(clockin))
+        self.clockoutTime = time(int(clockout))

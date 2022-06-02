@@ -1,5 +1,4 @@
 from config import CheckInSystemConfig
-from db_table import db_table
 from scanner import Scanner
 from datetime import time
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -9,12 +8,12 @@ from apscheduler.triggers.cron import CronTrigger
 
 
 class Checkpoints:
-    def __init__(self, network, clockin = "9", clockout = "18"):
-        self.config = CheckInSystemConfig(time(int(clockin)), time(int(clockout)))
+    def __init__(self, network, db):
+        self.config = CheckInSystemConfig()
         self.scheduler = BackgroundScheduler({
             'apscheduler.timezone': 'America/Los_Angeles',
         })
-        self.scanner = Scanner(network)
+        self.scanner = Scanner(network, db)
         self.addTrigger()
         self.scheduler.print_jobs()
         self.scheduler.start()
@@ -35,6 +34,7 @@ class Checkpoints:
                 ),
             ]),
             id = "non_working_time",
+            coalesce = True,
             replace_existing = True
         )
         temp_config3 = str(self.config.clockinTime.hour) + '-' + str(self.config.clockoutTime.hour)
@@ -47,6 +47,7 @@ class Checkpoints:
                 minute = temp_config4
             ),
             id = "working_time",
+            coalesce = True,
             replace_existing = True
         )
         self.scheduler.add_job(
@@ -64,6 +65,7 @@ class Checkpoints:
                 ),
             ]),
             id = "before_window",
+            coalesce = True,
             replace_existing = True
         )
         self.scheduler.add_job(
@@ -81,5 +83,6 @@ class Checkpoints:
                 )
             ]),
             id = "after_window",
+            coalesce = True,
             replace_existing = True
         )

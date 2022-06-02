@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 import sys
 sys.path.append("../module")
 from checkpoint import Checkpoints
@@ -16,7 +16,7 @@ db = SQLAlchemy(app)
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 
-checkpoints = Checkpoints(ip)
+checkpoints = Checkpoints(db, ip)
 app = Flask(__name__)
 
 @app.route('/')
@@ -27,7 +27,7 @@ def init():
 @app.route('/setTime', methods=['POST'])
 def result():
     print(request.form)
-    checkpoints.config = CheckInSystemConfig(time(int(request.form["clockin"])), time(int(request.form["clockout"])))
+    checkpoints.config = CheckInSystemConfig(request.form["clockin"], request.form["clockout"])
     checkpoints.addTrigger()
     checkpoints.scheduler.print_jobs()
     return render_template("configPage.html", config = checkpoints.config)

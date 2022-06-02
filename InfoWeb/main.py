@@ -2,6 +2,7 @@ from flask import Flask, request
 import sys
 sys.path.append("../module")
 from db_table import EMPLOYEE, CLOCKRECORD
+from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
 import socket
 
@@ -36,12 +37,14 @@ def result():
         print(ipdict)
         print(len(ipdict))
         mac = findMac(ip, ipdict)
-    if not db.session.query(EMPLOYEE.query.filter(EMPLOYEE.MAC == mac).exist()).scalar():
+    print(db.session.query(EMPLOYEE).filter_by(MAC = mac).first())
+    if db.session.query(EMPLOYEE).filter_by(MAC = mac).first() == None:
         employee = EMPLOYEE(name, mac, device)
         db.session.add(employee)
         db.session.commit()
+        db.session.flush()
     return name
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=3000, debug=False)

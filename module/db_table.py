@@ -36,3 +36,4 @@ class CLOCKRECORD(Base):
         self.CHECKPOINT = checkpoint
         self.RDATE = rdate
         self.STATUS = status
+
