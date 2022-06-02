@@ -8,11 +8,12 @@ from config import CheckInSystemConfig
 from db_table import EMPLOYEE, CLOCKRECORD
 import socket
 
+# Database
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:********@localhost/TrojanTech'
 db = SQLAlchemy(app)
 
-
+# host ip
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 
@@ -26,6 +27,10 @@ def init():
 
 @app.route('/setTime', methods=['POST'])
 def result():
+    """
+    Set checkin time and checkout time
+
+    """
     print(request.form)
     checkpoints.config = CheckInSystemConfig(request.form["clockin"], request.form["clockout"])
     checkpoints.addTrigger()

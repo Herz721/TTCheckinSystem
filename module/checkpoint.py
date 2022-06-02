@@ -19,6 +19,9 @@ class Checkpoints:
         self.scheduler.start()
 
     def addTrigger(self):
+        """
+            Add scheduler trigger
+        """
         temp_config1 = '0-' + str(self.config.clockinTime.hour) + '/' + str(self.config.NON_WORKING_TIME_INTERVAL)
         temp_config2 = str(self.config.clockoutTime.hour) + '-23/' + str(self.config.NON_WORKING_TIME_INTERVAL)
         self.scheduler.add_job(
