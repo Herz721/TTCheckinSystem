@@ -44,7 +44,9 @@ class Scanner():
             date (date): today date
         """
         checkpoint = datetime.now().strftime("%H:%M")
+        print(ipdict.values())
         for result in ipResults:
+            print(result.MAC)
             if result.MAC in ipdict.values():
                 vals = CLOCKRECORD(result.EID, checkpoint, date, 1)
             else:
