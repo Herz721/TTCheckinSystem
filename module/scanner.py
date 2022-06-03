@@ -4,7 +4,7 @@ import subprocess
 from db_table import EMPLOYEE, CLOCKRECORD
 
 class Scanner():
-    def __init__(self, db, network = "192.168.0.63"):
+    def __init__(self, db, network = "192.168.0.226"):
         self.network = network + "/24"
         self.db = db
         print(self.network)

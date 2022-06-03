@@ -8,12 +8,12 @@ from apscheduler.triggers.cron import CronTrigger
 
 
 class Checkpoints:
-    def __init__(self, network, db):
+    def __init__(self, db, network = "192.168.0.226"):
         self.config = CheckInSystemConfig()
         self.scheduler = BackgroundScheduler({
             'apscheduler.timezone': 'America/Los_Angeles',
         })
-        self.scanner = Scanner(network, db)
+        self.scanner = Scanner(db, network)
         self.addTrigger()
         self.scheduler.print_jobs()
         self.scheduler.start()
