@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
-scanner = Scanner(ip)
+scanner = Scanner(db, ip)
 
 def findMac(ip, ipdict):
     if ip in ipdict.keys():
