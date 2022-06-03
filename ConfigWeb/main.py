@@ -15,7 +15,9 @@ db = SQLAlchemy(app)
 
 # host ip
 hostname = socket.gethostname()
+print(hostname)
 ip = socket.gethostbyname(hostname)
+print(ip)
 
 checkpoints = Checkpoints(db, ip)
 app = Flask(__name__)
