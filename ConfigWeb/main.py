@@ -10,7 +10,7 @@ import socket
 
 # Database
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:********@localhost/TrojanTech'
+app.config['SQLALCHEMY_DATABASE_URI'] = config.Database
 db = SQLAlchemy(app)
 
 # host ip

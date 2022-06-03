@@ -1,7 +1,8 @@
 from datetime import time
 
-class CheckInSystemConfig:
+Database = 'mysql+pymysql://root:********@localhost/TrojanTech'
 
+class CheckInSystemConfig:
     # min < 60
     BEFORE_CLOCK = 15
     AFTER_CLOCK = 30
