@@ -19,7 +19,7 @@ print(hostname)
 ip = socket.gethostbyname(hostname)
 print(ip)
 
-checkpoints = Checkpoints(db, ip)
+checkpoints = Checkpoints(db)
 app = Flask(__name__)
 
 @app.route('/')
