@@ -4,13 +4,13 @@ import sys
 sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
-from config import CheckInSystemConfig
+from config import CheckInSystemConfig, Database
 from db_table import EMPLOYEE, CLOCKRECORD
 import socket
 
 # Database
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = config.Database
+app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
 db = SQLAlchemy(app)
 
 # host ip

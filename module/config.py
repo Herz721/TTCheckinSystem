@@ -1,7 +1,5 @@
 from datetime import time
 
-Database = 'mysql+pymysql://root:********@localhost/TrojanTech'
-
 class CheckInSystemConfig:
     # min < 60
     BEFORE_CLOCK = 15
@@ -16,3 +14,6 @@ class CheckInSystemConfig:
     def __init__(self, clockin = "9", clockout = "18"):
         self.clockinTime = time(int(clockin))
         self.clockoutTime = time(int(clockout))
+
+class Database:
+    connect = 'mysql+pymysql://root:********@localhost/TrojanTech'
