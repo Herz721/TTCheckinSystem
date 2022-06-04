@@ -12,9 +12,9 @@ app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
 db = SQLAlchemy(app)
 
-hostname = socket.gethostname()
+hostname = socket.getfqdn()
 ip = socket.gethostbyname(hostname)
-scanner = Scanner(db)
+scanner = Scanner(db, ip)
 
 def findMac(ip, ipdict):
     if ip in ipdict.keys():

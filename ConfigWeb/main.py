@@ -14,12 +14,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
 db = SQLAlchemy(app)
 
 # host ip
-hostname = socket.gethostname()
+hostname = socket.getfqdn()
 print(hostname)
 ip = socket.gethostbyname(hostname)
 print(ip)
 
-checkpoints = Checkpoints(db)
+checkpoints = Checkpoints(db, ip)
 app = Flask(__name__)
 
 @app.route('/')
