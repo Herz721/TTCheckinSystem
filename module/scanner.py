@@ -2,12 +2,25 @@ import scapy.all as scapy
 from datetime import datetime, date
 import subprocess
 from db_table import EMPLOYEE, CLOCKRECORD
+import socket
 
 class Scanner():
-    def __init__(self, db, network = "192.168.0.226"):
-        self.network = network + "/24"
+    def __init__(self, db):
+        self.network = self.get_ip() + "/24"
         self.db = db
         print(self.network)
+
+    def get_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        try:
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
 
     def findIpDict(self):
         """

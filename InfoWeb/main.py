@@ -5,16 +5,13 @@ from db_table import EMPLOYEE, CLOCKRECORD
 from config import Database
 from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
-import socket
 
 # create database
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
 db = SQLAlchemy(app)
 
-hostname = socket.getfqdn()
-ip = socket.gethostbyname(hostname)
-scanner = Scanner(db, ip)
+scanner = Scanner(db)
 
 def findMac(ip, ipdict):
     if ip in ipdict.keys():
