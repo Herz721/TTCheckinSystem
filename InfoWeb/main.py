@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
 import socket
 
+# create database
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:********@localhost/TrojanTech'
 db = SQLAlchemy(app)
