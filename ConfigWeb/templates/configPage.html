@@ -1,62 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %} {% block body %} {% if session["name"] %}
+<h1>Account Info</h1>
+<p>You are logged in as {{ session["name"] }}.<a href="/logout">Log out</a></p>
+<h1>Clockin Config</h1>
+<form action="/setTime" method="POST">
+  <label>ClockIn (Now: {{config.clockinTime.hour}}:00)</label><br />
+  <select name="clockin">
+    <optgroup label="clockin">
+      <option value="8">8:00</option>
+      <option value="9">9:00</option>
+      <option value="10">10:00</option>
+      <option value="11">11:00</option>
+    </optgroup></select
+  ><br />
+  <label>Clockout: (Now: {{config.clockoutTime.hour}}:00)</label><br />
+  <select name="clockout">
+    <optgroup label="clockout">
+      <option value="16">16:00</option>
+      <option value="17">17:00</option>
+      <option value="18" selected>18:00</option>
+      <option value="19">19:00</option>
+    </optgroup></select
+  ><br />
+  <input type="submit" value="Submit" />
+</form>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trojan Tech Info</title>
-</head>
-
-<body>
-    <form action="/setTime" method="POST">
-        <label>ClockIn (Now: {{config.clockinTime.hour}}:00)</label><br />
-        <select name="clockin">
-            <optgroup label="clockin">
-                <option value="8">8:00</option>
-                <option value="9">9:00</option>
-                <option value="10">10:00</option>
-                <option value="11">11:00</option>
-            </optgroup>
-        </select><br />
-        <label>Clockout: (Now: {{config.clockoutTime.hour}}:00)</label><br />
-        <select name="clockout">
-            <optgroup label="clockout">
-                <option value="16">16:00</option>
-                <option value="17">17:00</option>
-                <option value="18" selected>18:00</option>
-                <option value="19">19:00</option>
-            </optgroup>
-        </select><br />
-        <input type="submit" value="Submit" />
-    </form>
-
-    <h1>Schedule</h1>
-    <table>
-        <tr>
-            <th>Clock Period</th>
-            <th>Frequency</th>
-        </tr>
-        <tr>
-            <td>0:00 - {{config.clockinTime.hour - 1}}:{{60 - config.BEFORE_CLOCK}}</td>
-            <td>{{config.NON_WORKING_TIME_INTERVAL}}h</td>
-        </tr>
-        <tr>
-            <td>{{config.clockinTime.hour - 1}}:{{60 - config.BEFORE_CLOCK}} - {{config.clockinTime.hour}}:{{config.AFTER_CLOCK}}</td>
-            <td>{{config.WINDOW_INTERVAL}}min</td>
-        </tr>
-        <tr>
-            <td>{{config.clockinTime.hour}}:{{config.AFTER_CLOCK}} - {{config.clockoutTime.hour - 1}}:{{60 - config.AFTER_CLOCK}}</td>
-            <td>{{config.WORKING_TIME_INTERVAL}}min</td>
-        </tr>
-        <tr>
-            <td>{{config.clockoutTime.hour - 1}}:{{60 - config.AFTER_CLOCK}} - {{config.clockoutTime.hour}}:{{config.BEFORE_CLOCK}}</td>
-            <td>{{config.WINDOW_INTERVAL}}min</td>
-        </tr>
-        <tr>
-            <td>{{config.clockoutTime.hour}}:{{config.BEFORE_CLOCK}} - 23:59</td>
-            <td>{{config.NON_WORKING_TIME_INTERVAL}}h</td>
-        </tr>
-    </table>
-</body>
-
-</html>
+<h1>Schedule</h1>
+<table>
+  <tr>
+    <th>Clock Period</th>
+    <th>Frequency</th>
+  </tr>
+  <tr>
+    <td>0:00 - {{config.clockinTime.hour - 1}}:{{60 - config.BEFORE_CLOCK}}</td>
+    <td>{{config.NON_WORKING_TIME_INTERVAL}}h</td>
+  </tr>
+  <tr>
+    <td>
+      {{config.clockinTime.hour - 1}}:{{60 - config.BEFORE_CLOCK}} -
+      {{config.clockinTime.hour}}:{{config.AFTER_CLOCK}}
+    </td>
+    <td>{{config.WINDOW_INTERVAL}}min</td>
+  </tr>
+  <tr>
+    <td>
+      {{config.clockinTime.hour}}:{{config.AFTER_CLOCK}} -
+      {{config.clockoutTime.hour - 1}}:{{60 - config.AFTER_CLOCK}}
+    </td>
+    <td>{{config.WORKING_TIME_INTERVAL}}min</td>
+  </tr>
+  <tr>
+    <td>
+      {{config.clockoutTime.hour - 1}}:{{60 - config.AFTER_CLOCK}} -
+      {{config.clockoutTime.hour}}:{{config.BEFORE_CLOCK}}
+    </td>
+    <td>{{config.WINDOW_INTERVAL}}min</td>
+  </tr>
+  <tr>
+    <td>{{config.clockoutTime.hour}}:{{config.BEFORE_CLOCK}} - 23:59</td>
+    <td>{{config.NON_WORKING_TIME_INTERVAL}}h</td>
+  </tr>
+</table>
+{% else %} You are not logged in. <a href="/login">Log in</a>. {% endif %} {%
+endblock %}
