@@ -1,4 +1,4 @@
 .DS_Store 
 __pycache__
 flask_session
-config.py
+./module/config.py
