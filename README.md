@@ -2,8 +2,9 @@
 This is an automatic Checkin System
 
 ### Run
-In terminal, run this command:
+In InfoWeb folder, run this command to get registered
 ``` shell
-sudo ./getmac.sh
+sudo ./run.sh
 ```
-Then type in password of the host.
+Then type in password of the host./
+In ConfigWeb folder,run the same command for configuration.
