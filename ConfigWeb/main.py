@@ -24,6 +24,7 @@ ip = socket.gethostbyname(hostname)
 
 checkpoints = Checkpoints(db, ip)
 app = Flask(__name__)
+app.secret_key = 'dkadsjflkasdnfnjkkhnhdnj'
 
 @app.route("/")
 def init():
@@ -56,7 +57,7 @@ def logout():
     return redirect("/")
 
 if __name__ == '__main__':
-    app.secret_key = 'super secret key'
+
     app.config['SESSION_TYPE'] = 'filesystem'
     app.debug = True
     app.run(host="0.0.0.0", port=9122, debug=False)
