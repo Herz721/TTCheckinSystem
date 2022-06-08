@@ -2,3 +2,8 @@
 __pycache__
 flask_session
 config.py
+ConfigWeb/run.sh
+InfoWeb/run.sh
+greenlet/
+site-packages/
+venv/
