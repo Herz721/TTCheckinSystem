@@ -4,26 +4,32 @@ import sys
 sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
-from config import CheckInSystemConfig
+from config import CheckInSystemConfig,Database
 from db_table import EMPLOYEE, CLOCKRECORD
 import socket
 from flask_session import Session
 
 # Database
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = config.Database
+app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
 db = SQLAlchemy(app)
 
 #config session
 app.config["SESSION_PERMANENT"] = False
+app.config['SESSION_TYPE'] = 'filesystem'
+app.secret_key = 'HawaiiDream'
 Session(app)
 
 # host ip
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 
+# checkpoint
 checkpoints = Checkpoints(db, ip)
-app = Flask(__name__)
+
+# run
+app.debug = True
+app.run(host="0.0.0.0", port=9122, debug=False)
 
 @app.route("/")
 def init():
@@ -54,9 +60,3 @@ def result():
 def logout():
     session["name"] = None
     return redirect("/")
-
-if __name__ == '__main__':
-    app.secret_key = 'super secret key'
-    app.config['SESSION_TYPE'] = 'filesystem'
-    app.debug = True
-    app.run(host="0.0.0.0", port=9122, debug=False)
