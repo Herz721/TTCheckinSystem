@@ -4,7 +4,11 @@ import sys
 sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
+<<<<<<< HEAD
 from config import CheckInSystemConfig,Database
+=======
+from config import CheckInSystemConfig, Database
+>>>>>>> 700413994b0e6ec5c7c12e7730eb4cda9d7add39
 from db_table import EMPLOYEE, CLOCKRECORD
 import socket
 from flask_session import Session
