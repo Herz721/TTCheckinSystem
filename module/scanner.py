@@ -1,13 +1,26 @@
 import scapy.all as scapy
 from datetime import datetime, date
 import subprocess
-from db_table import EMPLOYEE, CLOCKRECORD
+from db_table import Employee, ClockRecord, Device
+import socket
 
 class Scanner():
-    def __init__(self, db, network = "192.168.0.63"):
-        self.network = network + "/24"
+    def __init__(self, db):
+        self.network = self.get_ip() + "/24"
         self.db = db
         print(self.network)
+
+    def get_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        try:
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
 
     def findIpDict(self):
         """
@@ -21,7 +34,7 @@ class Scanner():
         # broadcast
         broadcast = scapy.Ether(dst='ff:ff:ff:ff:ff:ff')
         arp_request_broadcast = broadcast/arp_request
-        answered_list = scapy.srp(arp_request_broadcast, timeout = 1, retry = 5, verbose = False)[0]
+        answered_list = scapy.srp(arp_request_broadcast, timeout = 1, retry = 10, verbose = False)[0]
 
         # src = mac address; psrc = ip address; dst = local mac address; pdst = local ip address
         for host in answered_list:
@@ -31,28 +44,61 @@ class Scanner():
     def scan(self):
         ipdict = self.findIpDict()
         # insert checkpoints
-        ipResults = self.db.session.query(EMPLOYEE).all()
-        self.insertRecord(ipResults, ipdict, date.today())
+        employeeList = self.db.session.query(Employee.eid).all()
+        self.insertRecord(macResults, ipdict, date.today())
 
-    def insertRecord(self, ipResults, ipdict, date):
+    def insertRecord(self, employeeList, ipdict, date):
         """
         Insert checkpoints records
 
         Args:
-            ipResults (list): all employee records in database
+            employeeList (list): all employee records in database
             ipdict (dict): (ip:mac) dict
             date (date): today date
         """
         checkpoint = datetime.now().strftime("%H:%M")
-        for result in ipResults:
-            if result.MAC in ipdict.values():
-                vals = CLOCKRECORD(result.EID, checkpoint, date, 1)
-            else:
+        for eid in employeeList:
+            devices = self.db.session.query(Device).filter_by(dev_type = "phone", eid = eid)
+            isHere = False
+            for device in devices:
+                if device.MAC in ipdict.values():
+                    vals = CLOCKRECORD(result.EID, checkpoint, date, 1)
+                    isHere = True
+                    break
+            if not isHere:
                 vals = CLOCKRECORD(result.EID, checkpoint, date, 0)
             self.db.session.add(vals)
             self.db.session.commit()
             self.db.session.flush()
         print(checkpoint + ": insert Successfully!")
+
+    def create_DailyReport(self):
+        date = date.today()
+        employeeList = self.db.session.query(Employee).all()
+        reportFile = open("../daily_reports/" + date + ".txt", "w")
+        for employee in employeeList:
+            reportFile.write("user_name: " + employee.ename + "\n")
+            reportFile.write("date: " + date + "\n")
+            reportFile.write("onboard time: " + query(eid, date) + "\n")
+            reportFile.write("----------------------------------------\n")
+        reportFile.close()
+
+    def query(self, eid, date):
+        res = ""
+        status = 0
+        results = self.sb.session.query(CLOCKRECORD).filter_by(EID = eid, RDATE = date).all()
+        for result in results:
+            if status == 0 and result.status == 1:
+                begin_time = result.check_point
+                status = 1
+            if status == 1 and result.status == 0:
+                end_time = result.check_point
+                if res != "":
+                    res = res + "; " 
+                res = res + begin_time + end_time
+                status = 0
+        return res
+
 
 
 if __name__ == "__main__":

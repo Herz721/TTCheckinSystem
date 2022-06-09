@@ -25,7 +25,7 @@ hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 
 # checkpoint
-checkpoints = Checkpoints(db, ip)
+checkpoints = Checkpoints(db)
 
 # run
 app.debug = True
