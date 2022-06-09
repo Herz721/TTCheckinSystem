@@ -4,36 +4,51 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class EMPLOYEE(Base):
-    __tablename__ = 'EMPLOYEE'
+class Employee(Base):
+    __tablename__ = 'employee'
 
-    EID = Column(Integer, autoincrement=True, primary_key=True)
-    ENAME = Column(String(64), nullable=False)
-    MAC = Column(String(32), nullable=False, unique=True)
-    DEVICE = Column(String(32), nullable=False)
-
-    def __init__(self, name, mac, device):
-        # self.EID = id
-        self.ENAME = name
-        self.MAC = mac
-        self.DEVICE = device
+    # autoincrement 
+    eid = Column(Integer, primary_key=True)
+    ename = Column(String(128), nullable=False)
+    password = Column(String(128))
+    role = Column(String(64), nullable=False)
+    status = Column(String(32), nullable=False)
+    dept = Column(String(64))
 
 
-class CLOCKRECORD(Base):
-    __tablename__ = 'CLOCKRECORDS'
+class ClockRecord(Base):
+    __tablename__ = 'clock_records'
 
-    RID = Column(Integer, autoincrement=True, primary_key=True)
-    EID = Column(ForeignKey('EMPLOYEE.EID', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
-    CHECKPOINT = Column(Time, nullable=False)
-    RDATE = Column(Date, nullable=False)
-    STATUS = Column(Integer, nullable=False)
+    rid = Column(Integer, primary_key=True)
+    eid = Column(ForeignKey('employee.eid', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    check_point = Column(Time, nullable=False)
+    rdate = Column(Date, nullable=False)
+    status = Column(Integer, nullable=False)
 
-    EMPLOYEE = relationship('EMPLOYEE')
+    employee = relationship('Employee')
 
     def __init__(self, eid, checkpoint, rdate, status):
-        # self.RID = rid
-        self.EID = eid
-        self.CHECKPOINT = checkpoint
-        self.RDATE = rdate
-        self.STATUS = status
+        # self.rid auto_increment
+        self.eid = eid
+        self.check_point = checkpoint
+        self.rdate = rdate
+        self.status = status
+
+
+class Device(Base):
+    __tablename__ = 'device'
+
+    MAC = Column(String(32), primary_key=True, unique=True)
+    dev_type = Column(String(32), nullable=False)
+    dev_name = Column(String(128))
+    eid = Column(ForeignKey('employee.eid', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+
+    employee = relationship('Employee')
+
+    def __init__(self, mac, dev_type, dev_name, eid):
+        self.MAC = mac
+        self.dev_type = dev_type
+        self.dev_name = dev_name
+        self.eid = eid
+
 

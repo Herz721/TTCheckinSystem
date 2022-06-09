@@ -2,18 +2,16 @@ from flask import Flask, request
 import sys
 sys.path.append("../module")
 from db_table import EMPLOYEE, CLOCKRECORD
+from config import Database
 from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
-import socket
 
 # create database
 app = Flask(__name__, static_url_path='')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:********@localhost/TrojanTech'
+app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
 db = SQLAlchemy(app)
 
-hostname = socket.gethostname()
-ip = socket.gethostbyname(hostname)
-scanner = Scanner(ip)
+scanner = Scanner(db)
 
 def findMac(ip, ipdict):
     if ip in ipdict.keys():
