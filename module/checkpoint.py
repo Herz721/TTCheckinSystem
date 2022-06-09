@@ -89,3 +89,12 @@ class Checkpoints:
             coalesce = True,
             replace_existing = True
         )
+        self.scheduler.add_job(
+            func = self.scanner.create_DailyReport,
+            trigger = CronTrigger(
+                day_of_week = 'mon-fri',
+                hour = self.config.CREATE_REPORT_TIME,
+            ),
+            id = "create_report",
+            replace_existing = True
+        )
