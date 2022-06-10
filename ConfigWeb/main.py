@@ -5,7 +5,7 @@ sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
 from config import CheckInSystemConfig, Database
-from db_table import EMPLOYEE, CLOCKRECORD
+from db_table import Employee, ClockRecord, Device
 import socket
 from flask_session import Session
 
@@ -33,17 +33,35 @@ app.run(host="0.0.0.0", port=9122, debug=False)
 
 @app.route("/")
 def init():
-    if not session.get("name"):
+    if session["name"] == None:
         return redirect("/login")
     return render_template("configPage.html", config = checkpoints.config)
 
 @app.route("/login",methods = ["GET","POST"])
 def login():
+    input_name = ""
+    input_pwd = ""
     if request.method == "POST":
-        session["name"] = request.form.get("name")
-        return redirect("/")
+        input_name = request.form.get("username")
+        input_pwd = request.form.get("pwd")
+        # check username and password
+        if authentication(input_name,input_pwd):
+            identity = db.session.query(Employee).filter_by(username = input_name).first()
+            # TODO:Add response
+            session["name"] = identity.ename
+            return redirect("/")
+    # Failed authentication
     return render_template("login.html")
 
+def authentication(name=None,pwd=None):
+    dbUser = db.session.query(Employee).filter_by(username = name).first()
+    if dbUser == None:
+        return False
+    elif dbUser.password == pwd:
+        return True
+    return False
+
+    
 @app.route('/setTime', methods=['POST'])
 def result():
     """
@@ -59,4 +77,4 @@ def result():
 @app.route("/logout")
 def logout():
     session["name"] = None
-    return redirect("/")
+    return redirect("/login")

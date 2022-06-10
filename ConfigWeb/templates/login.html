@@ -1,14 +1,26 @@
 {% extends "layout.html" %} {% block body %}
 
-<form action="/login" method="post">
+<form method="post">
   <input
     autocomplete="off"
     autofocus
-    name="name"
+    name="username"
     placeholder="Name"
     type="text"
   />
+  <br />
+  <input
+    autocomplete="off"
+    autofocus
+    name="pwd"
+    placeholder="Password"
+    type="text"
+  />
+  <br />
   <input type="submit" value="Log In" />
 </form>
+<script>
+  document.querySelector("form").addEventListener("submit", feedback);
+</script>
 
 {% endblock %}
