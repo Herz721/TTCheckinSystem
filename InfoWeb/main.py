@@ -1,14 +1,18 @@
-from flask import Flask, request
+from flask import Flask, request, render_template, jsonify, json 
 import sys
 sys.path.append("../module")
-from db_table import EMPLOYEE, CLOCKRECORD
+from db_table import Employee, ClockRecord, Device
 from config import Database
 from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
+from wtforms import SelectField
+from flask_wtf import FlaskForm
+from sqlalchemy import func, distinct
 
 # create database
 app = Flask(__name__, static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = Database.connect
+app.config['SECRET_KEY'] = 'HawaiianDream'
 db = SQLAlchemy(app)
 
 scanner = Scanner(db)
@@ -20,15 +24,40 @@ def findMac(ip, ipdict):
         print("find MAC failure")
         return ""
 
-@app.route('/')
-def init():
-    return app.send_static_file("index.html")
+class Form(FlaskForm):
+    dpt = SelectField('Department', choices=[])
+    name = SelectField('Name', choices=[])
 
+@app.route('/', methods=['GET','POST'])
+def init():
+    form = Form()
+    list_ = [one.dept for one in db.session.query(Employee.ename,Employee.dept).distinct(Employee.dept)]
+    se = set(list_)
+    li = list(se)
+    form.dpt.choices = li
+    # return app.send_static_file("index.html")
+    if request.method == 'POST':
+        name = db.session.query(Employee).filter_by(id=form.name.data).first()
+        dpt = db.session.query(Employee).filter_by(id=form.dpt.data).first()
+        return '<h1>Department : {}, Name: {}'.format(dpt.id, name.id)
+    return render_template("index.html",form=form)
+
+@app.route('/name/<get_name>')
+def nameByDept(get_name):
+    name = db.session.query(Employee).filter_by(dept=get_name).all()
+    nameList = []
+    for person in name:
+        nameObj = {}
+        nameObj['id'] = person.eid
+        nameObj['name'] = person.ename
+        nameList.append(nameObj)
+    return jsonify({'namedept': nameList})
 
 @app.route('/result')
 def result():
-    name = request.args.get('name')
-    device = request.args.get('device')
+    name = request.form.get('name')
+    device = request.form.get('device')
+    devName = request.form.get('device_name')
     ip = request.remote_addr
     mac = ""
     while mac == "":
@@ -36,9 +65,15 @@ def result():
         print(ipdict)
         print(len(ipdict))
         mac = findMac(ip, ipdict)
-    print(db.session.query(EMPLOYEE).filter_by(MAC = mac).first())
-    if db.session.query(EMPLOYEE).filter_by(MAC = mac).first() == None:
-        employee = EMPLOYEE(name, mac, device)
+    # If the Mac already exists or not
+    searchMac = db.session.query(Device).filter_by(MAC = mac).first()
+    print(searchMac)
+
+    person = db.session.query(Employee).filter_by(ename = name)
+    print(person.role)
+    if searchMac == None:
+        # TODO:dev_name and eid
+        employee = Device(mac,device,dev_name,person.eid)
         db.session.add(employee)
         db.session.commit()
         db.session.flush()
