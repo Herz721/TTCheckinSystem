@@ -5,9 +5,8 @@ sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
 from config import CheckInSystemConfig, Database
-from db_table import EMPLOYEE, CLOCKRECORD
-import socket
 from flask_session import Session
+from db_table import Employee, ClockRecord, Device
 
 # Database
 app = Flask(__name__)
@@ -20,22 +19,14 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.secret_key = 'HawaiiDream'
 Session(app)
 
-# host ip
-hostname = socket.gethostname()
-ip = socket.gethostbyname(hostname)
-
 # checkpoint
 checkpoints = Checkpoints(db)
-
-# run
-app.debug = True
-app.run(host="0.0.0.0", port=9122, debug=False)
 
 @app.route("/")
 def init():
     if not session.get("name"):
         return redirect("/login")
-    return render_template("configPage.html", config = checkpoints.config)
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
 
 @app.route("/login",methods = ["GET","POST"])
 def login():
@@ -54,9 +45,12 @@ def result():
     checkpoints.config = CheckInSystemConfig(request.form["clockin"], request.form["clockout"])
     checkpoints.addTrigger()
     checkpoints.scheduler.print_jobs()
-    return render_template("configPage.html", config = checkpoints.config)
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
 
 @app.route("/logout")
 def logout():
     session["name"] = None
     return redirect("/")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9122, debug=False)

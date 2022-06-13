@@ -1,7 +1,7 @@
 from flask import Flask, request
 import sys
 sys.path.append("../module")
-from db_table import EMPLOYEE, CLOCKRECORD
+from db_table import Employee, ClockRecord, Device
 from config import Database
 from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
@@ -36,11 +36,13 @@ def result():
         print(ipdict)
         print(len(ipdict))
         mac = findMac(ip, ipdict)
-    print(db.session.query(EMPLOYEE).filter_by(MAC = mac).first())
-    if db.session.query(EMPLOYEE).filter_by(MAC = mac).first() == None:
-        employee = EMPLOYEE(name, mac, device)
-        db.session.add(employee)
+    if db.session.query(Device).filter_by(MAC = mac).first() == None:
+        employee = db.session.query(Employee).filter_by(ename = name).first()
+        device = Device(mac, "phone", name + "'s phone", employee.eid)
+        db.session.add(device)
         db.session.commit()
         db.session.flush()
     return name
 
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9222, debug=False)

@@ -60,5 +60,19 @@
     <td>{{config.NON_WORKING_TIME_INTERVAL}}h</td>
   </tr>
 </table>
+
+<h1>Report: {{reports[0][1]}}</h1>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Onboard Time</th>
+  </tr>
+  {% for report in reports %}
+  <tr>
+    <td>{{ report[0] }}</td>
+    <td>{{ report[2] }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% else %} You are not logged in. <a href="/login">Log in</a>. {% endif %} {%
 endblock %}

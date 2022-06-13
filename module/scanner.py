@@ -44,8 +44,9 @@ class Scanner():
     def scan(self):
         ipdict = self.findIpDict()
         # insert checkpoints
-        employeeList = self.db.session.query(Employee.eid).all()
-        self.insertRecord(macResults, ipdict, date.today())
+        employeeList = self.db.session.query(Employee).all()
+        print(employeeList)
+        self.insertRecord(employeeList, ipdict, date.today())
 
     def insertRecord(self, employeeList, ipdict, date):
         """
@@ -57,45 +58,53 @@ class Scanner():
             date (date): today date
         """
         checkpoint = datetime.now().strftime("%H:%M")
-        for eid in employeeList:
-            devices = self.db.session.query(Device).filter_by(dev_type = "phone", eid = eid)
+        for employee in employeeList:
+            devices = self.db.session.query(Device).filter_by(dev_type = "phone", eid = employee.eid)
             isHere = False
             for device in devices:
                 if device.MAC in ipdict.values():
-                    vals = CLOCKRECORD(result.EID, checkpoint, date, 1)
+                    vals = ClockRecord(employee.eid, checkpoint, date, 1)
                     isHere = True
                     break
             if not isHere:
-                vals = CLOCKRECORD(result.EID, checkpoint, date, 0)
+                vals = ClockRecord(employee.eid, checkpoint, date, 0)
             self.db.session.add(vals)
             self.db.session.commit()
             self.db.session.flush()
         print(checkpoint + ": insert Successfully!")
 
     def create_DailyReport(self):
-        date = date.today()
-        employeeList = self.db.session.query(Employee).all()
-        reportFile = open("../daily_reports/" + date + ".txt", "w")
-        for employee in employeeList:
-            reportFile.write("user_name: " + employee.ename + "\n")
-            reportFile.write("date: " + date + "\n")
-            reportFile.write("onboard time: " + query(eid, date) + "\n")
+        reportFile = open("../daily_reports/" + todayDate + ".txt", "w")
+        reportList = queryall()
+        # report[0]: name; report[1]: date; report[2]: onboard_time
+        for report in reportList:
+            reportFile.write("user_name: " + report[0] + "\n")
+            reportFile.write("date: " + report[1] + "\n")
+            reportFile.write("onboard time: " + report[2] + "\n")
             reportFile.write("----------------------------------------\n")
         reportFile.close()
+
+    def queryall(self):
+        res = []
+        todayDate = str(date.today())
+        employeeList = self.db.session.query(Employee).all()
+        for employee in employeeList:
+            res.append((employee.ename, todayDate, self.query(employee.eid, todayDate)))
+        return res
 
     def query(self, eid, date):
         res = ""
         status = 0
-        results = self.sb.session.query(CLOCKRECORD).filter_by(EID = eid, RDATE = date).all()
+        results = self.db.session.query(ClockRecord).filter_by(eid = eid, rdate = date).all()
         for result in results:
             if status == 0 and result.status == 1:
-                begin_time = result.check_point
+                begin_time = str(result.check_point)
                 status = 1
             if status == 1 and result.status == 0:
-                end_time = result.check_point
+                end_time = str(result.check_point)
                 if res != "":
                     res = res + "; " 
-                res = res + begin_time + end_time
+                res = res + begin_time + "-" + end_time
                 status = 0
         return res
 
