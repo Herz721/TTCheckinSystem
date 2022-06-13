@@ -1,7 +1,7 @@
 from flask import Flask, request
 import sys
 sys.path.append("../module")
-from db_table import EMPLOYEE, CLOCKRECORD
+from db_table import Employee, ClockRecord, Device
 from config import Database
 from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner

@@ -5,7 +5,7 @@ sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
 from config import CheckInSystemConfig, Database
-from db_table import EMPLOYEE, CLOCKRECORD
+from db_table import Employee, ClockRecord, Device
 
 # Database
 app = Flask(__name__)
