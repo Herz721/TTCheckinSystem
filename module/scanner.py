@@ -99,12 +99,11 @@ class Scanner():
         for result in results:
             if status == 0 and result.status == 1:
                 begin_time = str(result.check_point)
+                res = res + begin_time + "-"
                 status = 1
             if status == 1 and result.status == 0:
                 end_time = str(result.check_point)
-                if res != "":
-                    res = res + "; " 
-                res = res + begin_time + "-" + end_time
+                res = res + end_time + "; " 
                 status = 0
         return res
 
