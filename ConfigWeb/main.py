@@ -53,7 +53,7 @@ def authentication(name=None,pwd=None):
 def init():
     if session["name"] == None:
         return redirect("/")
-    return render_template("configPage.html", config = checkpoints.config)
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
     
 @app.route('/setTime', methods=['POST'])
 def result():
