@@ -5,8 +5,9 @@ sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import time, timedelta
 from config import CheckInSystemConfig, Database
-from flask_session import Session
 from db_table import Employee, ClockRecord, Device
+import socket
+from flask_session import Session
 
 # Database
 app = Flask(__name__)
@@ -22,19 +23,38 @@ Session(app)
 # checkpoint
 checkpoints = Checkpoints(db)
 
-@app.route("/")
-def init():
-    if not session.get("name"):
-        return redirect("/login")
-    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
 
-@app.route("/login",methods = ["GET","POST"])
+@app.route("/",methods = ["GET","POST"])
 def login():
+    input_name = ""
+    input_pwd = ""
     if request.method == "POST":
-        session["name"] = request.form.get("name")
-        return redirect("/")
+        input_name = request.form.get("username")
+        input_pwd = request.form.get("pwd")
+        # check username and password
+        if authentication(input_name,input_pwd):
+            identity = db.session.query(Employee).filter_by(username = input_name).first()
+            # TODO:Add response
+            session["name"] = identity.ename
+            return redirect("/Config")
+    # Failed authentication
     return render_template("login.html")
 
+def authentication(name=None,pwd=None):
+    dbUser = db.session.query(Employee).filter_by(username = name).first()
+    if dbUser == None:
+        return False
+    elif dbUser.password == pwd:
+        return True
+    return False
+
+
+@app.route("/Config")
+def init():
+    if session["name"] == None:
+        return redirect("/")
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
+    
 @app.route('/setTime', methods=['POST'])
 def result():
     """
@@ -53,4 +73,4 @@ def logout():
     return redirect("/")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9122, debug=False)
+    app.run(host="0.0.0.0", port=9122, debug=True)

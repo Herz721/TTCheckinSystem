@@ -3,8 +3,8 @@
 <p>You are logged in as {{ session["name"] }}.<a href="/logout">Log out</a></p>
 <h1>Clockin Config</h1>
 <form action="/setTime" method="POST">
-    <label>ClockIn (Now: {{config.clockinTime.hour}}:00)</label><br />
-    <select name="clockin">
+  <label>ClockIn (Now: {{config.clockinTime.hour}}:00)</label><br />
+  <select name="clockin">
     <optgroup label="clockin">
       <option value="8">8:00</option>
       <option value="9">9:00</option>

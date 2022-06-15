@@ -14,6 +14,7 @@ class Employee(Base):
     role = Column(String(64), nullable=False)
     status = Column(String(32), nullable=False)
     dept = Column(String(64))
+    username = Column(String(64))
 
 
 class ClockRecord(Base):
