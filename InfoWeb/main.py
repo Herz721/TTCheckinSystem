@@ -38,26 +38,26 @@ def init():
     # return app.send_static_file("index.html")
     if request.method == 'POST':
         name = db.session.query(Employee).filter_by(id=form.name.data).first()
-        dpt = db.session.query(Employee).filter_by(id=form.dpt.data).first()
+        # dpt = db.session.query(Employee).filter_by(id=form.dpt.data).first()
         return '<h1>Department : {}, Name: {}'.format(dpt.id, name.id)
     return render_template("index.html",form=form)
 
 @app.route('/name/<get_name>')
 def nameByDept(get_name):
-    name = db.session.query(Employee).filter_by(dept=get_name).all()
+    names = db.session.query(Employee).filter_by(dept=get_name).all()
     nameList = []
-    for person in name:
+    for person in names:
         nameObj = {}
         nameObj['id'] = person.eid
         nameObj['name'] = person.ename
         nameList.append(nameObj)
-    return jsonify({'namedept': nameList})
+    return jsonify({'names': nameList})
 
 @app.route('/result')
 def result():
     name = request.form.get('name')
     device = request.form.get('device')
-    devName = request.form.get('device_name')
+    dev_name = request.form.get('device_name')
     ip = request.remote_addr
     mac = ""
     while mac == "":
@@ -72,10 +72,11 @@ def result():
     person = db.session.query(Employee).filter_by(ename = name)
     print(person.role)
     if searchMac == None:
-        # TODO:dev_name and eid
         employee = Device(mac,device,dev_name,person.eid)
         db.session.add(employee)
         db.session.commit()
         db.session.flush()
     return name
 
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9222, debug=True)

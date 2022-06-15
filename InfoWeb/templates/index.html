@@ -27,6 +27,29 @@
           <label for="nm"> Name:</label>
           {{ form.name(class="form-control")}}
         </div>
+        <script>
+          let dept_select = document.getElementById("dpt");
+          let name_select = document.getElementById("name");
+
+          dept_select.onchange = function () {
+            dpt_selected = dept_select.value;
+            fetch("/name/" + dpt_selected).then(function (response) {
+              response.json().then(function (data) {
+                let optionHTML = "";
+                for (let name of data.names) {
+                  optionHTML +=
+                    '<option value="' +
+                    name.id +
+                    '">' +
+                    name.name +
+                    "</option>";
+                }
+                <!-- overwrite the old HTML options-->
+                name_select.innerHTML = optionHTML;
+              });
+            });
+          };
+        </script>
       </div>
       <label>Device:</label><br />
       <select id="device">
@@ -51,27 +74,6 @@
       <input type="submit" value="Register" />
     </form>
     <script>
-      dept_select = document.getElementById("department");
-      name_select = document.getElementById("name");
-
-      dept_select.onchange = function () {
-        department = dept_select.value;
-        fetch("name/" + dept).then(function (response) {
-          response.json().then(function (data) {
-            optionHTML = "";
-            for (name of data.namedept) {
-              optionHTML +=
-                '<option value="' +
-                nameList.id +
-                '">' +
-                state.name +
-                "</option>";
-            }
-            name_select.innerHTML = optionHTML;
-          });
-        });
-      };
-
       document.querySelector("form").addEventListener("submit", feedback);
     </script>
   </body>
