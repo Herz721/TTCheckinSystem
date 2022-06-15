@@ -1,10 +1,14 @@
 ## TTCheckinSystem
-This is an automatic Checkin System
+
+This is a plug-and-play Checkin System
 
 ### Run
+
 In InfoWeb folder, run this command to get registered
-``` shell
+
+```shell
 sudo ./run.sh
 ```
-Then type in password of the host./
+
+Then type in password of the host.\
 In ConfigWeb folder,run the same command for configuration.

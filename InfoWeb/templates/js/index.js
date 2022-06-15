@@ -14,8 +14,8 @@ function submitInfo() {
 
 function feedback() {
     // Validate registeration
-    let name = document.querySelector("#name").value;
     let device = document.querySelector("#device").value;
+    let name = document.querySelector("#device_name").value;
     const devices = new Set(["phone", "pad", "pc", "other"]);
     if (!name) {
         alert("Missing Name");
