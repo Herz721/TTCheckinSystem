@@ -8,7 +8,6 @@ from config import CheckInSystemConfig, Database
 from db_table import Employee, ClockRecord, Device
 import socket
 from flask_session import Session
-from flask_login import LoginManager, UserMixin
 
 # Database
 app = Flask(__name__)
@@ -28,17 +27,8 @@ ip = socket.gethostbyname(hostname)
 # checkpoint
 checkpoints = Checkpoints(db)
 
-# Login
-login_manager = LoginManager()
-login_manager.init_app(app)
 
-@app.route("/")
-def init():
-    if session["name"] == None:
-        return redirect("/login")
-    return render_template("configPage.html", config = checkpoints.config)
-
-@app.route("/login",methods = ["GET","POST"])
+@app.route("/",methods = ["GET","POST"])
 def login():
     input_name = ""
     input_pwd = ""
@@ -50,7 +40,7 @@ def login():
             identity = db.session.query(Employee).filter_by(username = input_name).first()
             # TODO:Add response
             session["name"] = identity.ename
-            return redirect("/")
+            return redirect("/Config")
     # Failed authentication
     return render_template("login.html")
 
@@ -62,6 +52,12 @@ def authentication(name=None,pwd=None):
         return True
     return False
 
+
+@app.route("/Config")
+def init():
+    if session["name"] == None:
+        return redirect("/")
+    return render_template("configPage.html", config = checkpoints.config)
     
 @app.route('/setTime', methods=['POST'])
 def result():
@@ -78,7 +74,7 @@ def result():
 @app.route("/logout")
 def logout():
     session["name"] = None
-    return redirect("/login")
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9122, debug=True)
