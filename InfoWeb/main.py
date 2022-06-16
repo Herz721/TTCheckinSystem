@@ -53,26 +53,28 @@ def nameByDept(get_name):
         nameList.append(nameObj)
     return jsonify({'names': nameList})
 
-@app.route('/result', methods=['POST'])
+@app.route('/result',methods=['GET','POST'])
 def result():
-    name = request.form.get('name')
+    name_eid = request.form.get('name')
     device = request.form.get('device')
-    dev_name = request.form.get('device_name')
+    dev_name = request.form.get('dev_name')
     ip = request.remote_addr
     mac = ""
+    # print(",Name: " + name + ",Device: " + device + ",Device Name: " + dev_name)
+
     while mac == "":
         ipdict = scanner.findIpDict()
-        # print(ipdict)
-        # print(len(ipdict))
+        print(ipdict)
+        print(len(ipdict))
         mac = findMac(ip, ipdict)
+
     if db.session.query(Device).filter_by(MAC = mac).first() == None:
-        employee = db.session.query(Employee).filter_by(eid = name).first()
-        if employee:
-            device = Device(mac, "phone", employee.ename + "'s phone", employee.eid)
-            db.session.add(device)
-            db.session.commit()
-            db.session.flush()
-    return name
+        # employee = db.session.query(Employee).filter_by(ename = name).first()
+        device = Device(mac, device, dev_name, name_eid)
+        db.session.add(device)
+        db.session.commit()
+        db.session.flush()
+    return name_eid
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9222, debug=False)
+    app.run(host="0.0.0.0", port=9222, debug=True)
