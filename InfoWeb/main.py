@@ -68,14 +68,17 @@ def result():
         print(len(ipdict))
         mac = findMac(ip, ipdict)
 
-    if db.session.query(Device).filter_by(MAC = mac).first() == None:
+    if mac = "":
+        # meizhaodao
+    elif db.session.query(Device).filter_by(MAC = mac).first() == None:
+        # try
         # employee = db.session.query(Employee).filter_by(ename = name).first()
         device = Device(mac, device, dev_name, name_eid)
         db.session.add(device)
         db.session.commit()
         db.session.flush()
     # else:
-        # TODO:Insert failed: Already registered
+        # TODO:Insert success or failed
     return name_eid
 
 if __name__ == "__main__":
