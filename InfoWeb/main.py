@@ -74,6 +74,8 @@ def result():
         db.session.add(device)
         db.session.commit()
         db.session.flush()
+    # else:
+        # TODO:Insert failed: Already registered
     return name_eid
 
 if __name__ == "__main__":

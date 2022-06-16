@@ -72,6 +72,13 @@
       <br />
       <input type="submit" value="Register" />
       <script>
+        let device = document.getElementById("device");
+        device.onchange = function () {
+          document.getElementById("device_name").value =
+            $("#name").find(":selected").text() + "'s " + device.value;
+        };
+        document.querySelector("form").addEventListener("submit", feedback);
+
         function submitInfo() {
           console.log($("#name").val());
           console.log($("#device").val());
@@ -88,10 +95,23 @@
           });
           return false;
         }
+
+        function feedback() {
+          // Validate registeration
+          let device = document.querySelector("#device").value;
+          let name = document.querySelector("#device_name").value;
+          const devices = new Set(["phone", "pad", "pc", "other"]);
+          if (!name) {
+            alert("Missing Device Name");
+            return app.send_static_file("index.html");
+          } else if (!devices.has(device)) {
+            alert("Missing Device");
+            return app.send_static_file("index.html");
+          }
+          // Confirm registeration
+          alert(" You've successfully registered! ");
+        }
       </script>
     </form>
-    <!-- <script>
-      document.querySelector("form").addEventListener("submit", feedback);
-    </script> -->
   </body>
 </html>
