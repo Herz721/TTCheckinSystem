@@ -5,7 +5,8 @@ function submitInfo() {
         url: "/result",
         data: {
             "name": $('#name').val(),
-            "device": $('#device').val()
+            "device": $('#device').val(),
+            "dev_name":$('#device_name').val()
         },
         success: function(data) {}
     });

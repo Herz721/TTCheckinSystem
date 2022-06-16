@@ -9,7 +9,7 @@
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="./js/index.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   </head>
@@ -72,9 +72,27 @@
       />
       <br />
       <input type="submit" value="Register" />
+      <script>
+        function submitInfo() {
+          console.log($("#name").val());
+          console.log($("#device").val());
+          console.log($("#device_name").val());
+          $.ajax({
+            type: "post",
+            url: "/result",
+            data: {
+              name: $("#name").val(),
+              device: $("#device").val(),
+              dev_name: $("#device_name").val(),
+            },
+            success: function (data) {},
+          });
+          return false;
+        }
+      </script>
     </form>
-    <script>
+    <!-- <script>
       document.querySelector("form").addEventListener("submit", feedback);
-    </script>
+    </script> -->
   </body>
 </html>
