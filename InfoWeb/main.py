@@ -53,7 +53,7 @@ def nameByDept(get_name):
         nameList.append(nameObj)
     return jsonify({'names': nameList})
 
-@app.route('/result')
+@app.route('/result', methods=['POST'])
 def result():
     name = request.form.get('name')
     device = request.form.get('device')
@@ -62,15 +62,16 @@ def result():
     mac = ""
     while mac == "":
         ipdict = scanner.findIpDict()
-        print(ipdict)
-        print(len(ipdict))
+        # print(ipdict)
+        # print(len(ipdict))
         mac = findMac(ip, ipdict)
     if db.session.query(Device).filter_by(MAC = mac).first() == None:
-        employee = db.session.query(Employee).filter_by(ename = name).first()
-        device = Device(mac, "phone", name + "'s phone", employee.eid)
-        db.session.add(device)
-        db.session.commit()
-        db.session.flush()
+        employee = db.session.query(Employee).filter_by(eid = name).first()
+        if employee:
+            device = Device(mac, "phone", employee.ename + "'s phone", employee.eid)
+            db.session.add(device)
+            db.session.commit()
+            db.session.flush()
     return name
 
 if __name__ == "__main__":

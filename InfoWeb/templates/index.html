@@ -9,7 +9,39 @@
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="./js/index.js"></script>
+    <!-- <script type="text/javascript" src="./js/index.js"></script> -->
+    <script>
+      function submitInfo() {
+          console.log($('#device').val())
+          $.ajax({
+              type: "post",
+              url: "/result",
+              data: {
+                  "name": $('#name').val(),
+                  "device": $('#device').val(),
+                  "device_name": $('#device_name').val(),
+              },
+              success: function(data) {}
+          });
+          return false;
+      }
+
+      function feedback() {
+          // Validate registeration
+          let device = document.querySelector("#device").value;
+          let name = document.querySelector("#device_name").value;
+          const devices = new Set(["phone", "pad", "pc", "other"]);
+          if (!name) {
+              alert("Missing Name");
+              return app.send_static_file("index.html");
+          } else if (!devices.has(device)) {
+              alert("Missing Device");
+              return app.send_static_file("index.html");
+          }
+          // Confirm registeration
+          alert("Hello, " + name + "! You've successfully registered! ");
+      }
+    </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   </head>
