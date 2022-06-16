@@ -62,11 +62,8 @@ def result():
     mac = ""
     # print(",Name: " + name + ",Device: " + device + ",Device Name: " + dev_name)
 
-    while mac == "":
-        ipdict = scanner.findIpDict()
-        print(ipdict)
-        print(len(ipdict))
-        mac = findMac(ip, ipdict)
+    ipdict = scanner.findIpDict()
+    mac = findMac(ip, ipdict)
 
     if mac = "":
         # meizhaodao
