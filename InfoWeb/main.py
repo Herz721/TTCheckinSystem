@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from scanner import Scanner
 from wtforms import SelectField
 from flask_wtf import FlaskForm
-from sqlalchemy import func, distinct
+from sqlalchemy import func, distinct, exc
 
 # create database
 app = Flask(__name__, static_url_path='')
@@ -63,20 +63,24 @@ def result():
     # print(",Name: " + name + ",Device: " + device + ",Device Name: " + dev_name)
 
     ipdict = scanner.findIpDict()
+    print(ipdict)
     mac = findMac(ip, ipdict)
 
-    if mac = "":
-        # meizhaodao
+    if mac == "":
+        res = " Register Fail! "
     elif db.session.query(Device).filter_by(MAC = mac).first() == None:
-        # try
-        # employee = db.session.query(Employee).filter_by(ename = name).first()
-        device = Device(mac, device, dev_name, name_eid)
-        db.session.add(device)
-        db.session.commit()
-        db.session.flush()
-    # else:
-        # TODO:Insert success or failed
-    return name_eid
+        try:
+            device = Device(mac, device, dev_name, name_eid)
+            db.session.add(device)
+            db.session.commit()
+            db.session.flush()
+            res = " You've successfully registered! "
+        except exc.SQLAlchemyError as e:
+            res = str(e)
+    else:
+        res = " Already Registered! "
+    print(res)
+    return res
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=9222, debug=True)

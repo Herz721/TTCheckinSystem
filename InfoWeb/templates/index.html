@@ -1,57 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trojan Tech Info</title>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
-    />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <form onsubmit="return submitInfo()">
-      <label>Please Register with Your Cellphone:</label><br />
-      <div class="Select">
-        {{form.csrf_token}}
-        <div class="form-group">
-          <label for="dpt"> Department:</label>
-          {{ form.dpt(class="form-control")}}
-        </div>
-        <div class="form-group">
-          <label for="nm"> Name:</label>
-          {{ form.name(class="form-control")}}
-        </div>
-        <script>
-          let dept_select = document.getElementById("dpt");
-          let name_select = document.getElementById("name");
+        <label>Please Register with Your Cellphone:</label><br />
+        <div class="Select">
+            {{form.csrf_token}}
+            <div class="form-group">
+                <label for="dpt"> Department:</label> {{ form.dpt(class="form-control")}}
+            </div>
+            <div class="form-group">
+                <label for="nm"> Name:</label> {{ form.name(class="form-control")}}
+            </div>
+            <script>
+                let dept_select = document.getElementById("dpt");
+                let name_select = document.getElementById("name");
 
-          dept_select.onchange = function () {
-            dpt_selected = dept_select.value;
-            fetch("/name/" + dpt_selected).then(function (response) {
-              response.json().then(function (data) {
-                let optionHTML = "";
-                for (let name of data.names) {
-                  optionHTML +=
-                    '<option value="' +
-                    name.id +
-                    '">' +
-                    name.name +
-                    "</option>";
-                }
-                <!-- overwrite the old HTML options-->
-                name_select.innerHTML = optionHTML;
-              });
-            });
-          };
-        </script>
-      </div>
-      <label>Device:</label><br />
-      <select id="device">
+                dept_select.onchange = function() {
+                    dpt_selected = dept_select.value;
+                    fetch("/name/" + dpt_selected).then(function(response) {
+                        response.json().then(function(data) {
+                            let optionHTML = "";
+                            for (let name of data.names) {
+                                optionHTML +=
+                                    '<option value="' +
+                                    name.id +
+                                    '">' +
+                                    name.name +
+                                    "</option>";
+                            }
+                            name_select.innerHTML = optionHTML;
+                        });
+                    });
+                };
+            </script>
+        </div>
+        <label>Device:</label><br />
+        <select id="device">
         <optgroup label="Device">
           <option disable selected>Your Device</option>
           <option value="phone">Cellphone</option>
@@ -91,7 +86,9 @@
               device: $("#device").val(),
               dev_name: $("#device_name").val(),
             },
-            success: function (data) {},
+            success: function (data) {
+              alert(data);
+            },
           });
           return false;
         }
@@ -108,8 +105,6 @@
             alert("Missing Device");
             return app.send_static_file("index.html");
           }
-          // Confirm registeration
-          alert(" You've successfully registered! ");
         }
       </script>
     </form>
