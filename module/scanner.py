@@ -45,7 +45,7 @@ class Scanner():
         ipdict = self.findIpDict()
         # insert checkpoints
         employeeList = self.db.session.query(Employee).all()
-        print(employeeList)
+        print(ipdict)
         self.insertRecord(employeeList, ipdict, date.today())
 
     def insertRecord(self, employeeList, ipdict, date):
@@ -103,7 +103,7 @@ class Scanner():
                 status = 1
             if status == 1 and result.status == 0:
                 end_time = str(result.check_point)
-                res = res + end_time + "; " 
+                res = res + end_time + "; "
                 status = 0
         return res
 
