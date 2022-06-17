@@ -1,8 +1,9 @@
 import scapy.all as scapy
-from datetime import datetime, date
+from datetime import datetime, date, time
 import subprocess
 from db_table import Employee, ClockRecord, Device
 import socket
+from config import CheckInSystemConfig
 
 class Scanner():
     def __init__(self, db):
@@ -96,14 +97,19 @@ class Scanner():
         res = ""
         status = 0
         results = self.db.session.query(ClockRecord).filter_by(eid = eid, rdate = date).all()
+        begin_time = time()
+        end_time = time()
         for result in results:
             if status == 0 and result.status == 1:
-                begin_time = str(result.check_point)
-                res = res + begin_time + "-"
+                begin_time = result.check_point
+                res = res + str(begin_time) + "-"
                 status = 1
             if status == 1 and result.status == 0:
-                end_time = str(result.check_point)
-                res = res + end_time + "; "
+                end_time = result.check_point
+                interval =  (end_time.hour - begin_time.hour) * 60 + end_time.minute - begin_time.minute
+                if interval < CheckInSystemConfig.REPORT_ALLOWANCE_INTERVAL:
+                    continue
+                res = res + str(end_time) + "; "
                 status = 0
         return res
 
