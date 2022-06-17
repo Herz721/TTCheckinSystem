@@ -39,7 +39,18 @@
         border: 4px solid transparent;
         border-top-color: #ffffff;
         animation: an1 1s ease infinite;
-        todo: disable click;
+      }
+      .loader:not(:focus):hover {
+        pointer-events: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 4px solid transparent;
+        border-top-color: #ffffff;
+        animation: an1 1s ease infinite;
+      }
+      .loader:focus {
+        outline: none;
       }
 
       @keyframes an1 {
@@ -153,15 +164,17 @@
 
         function feedback() {
           // Validate registeration
+          let name = document.querySelector("#name").value;
           let device = document.querySelector("#device").value;
-          let name = document.querySelector("#device_name").value;
+          let dname = document.querySelector("#device_name").value;
           const devices = new Set(["phone", "pad", "pc", "other"]);
+
           if (!name) {
-            alert("Missing Device Name");
-            return 0;
+            alert("Missing Name");
           } else if (!devices.has(device)) {
             alert("Missing Device");
-            return 0;
+          } else if (!dname) {
+            alert("Missing Device Name");
           }
           // Button loading
           let btn = document.querySelector(".button");
