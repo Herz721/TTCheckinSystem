@@ -28,7 +28,7 @@
         vertical-align: middle;
       }
       .button {
-        position: relative;
+        position: absolute;
         padding: 8px 16px;
         background: #009579;
         border: none;
@@ -83,6 +83,7 @@
   <body>
     <form onsubmit="return submitInfo()">
       <label>Please Register with Your Cellphone</label><br />
+      <!-- Joint Menu Dropdown -->
       <div class="Select">
         {{form.csrf_token}}
         <div class="form-group">
@@ -117,26 +118,30 @@
         </script>
       </div>
       <label>Device:</label><br />
-      <select id="device">
-        <optgroup label="Device">
-          <option disable selected>Your Device</option>
-          <option value="phone">Cellphone</option>
-          <option value="pad">Pad</option>
-          <option value="pc">Laptop</option>
-          <option value="other">Other</option>
-        </optgroup></select
-      ><br /><br />
-      <label>Device Name:</label>
-      <br />
-      <input
-        type="text"
-        id="device_name"
-        autofocus
-        name="device_name"
-        placeholder="Name"
-      />
-      <br />
-      <br />
+      <!-- Device info  -->
+      <div>
+        <select id="device">
+          <optgroup label="Device">
+            <option disable selected>Your Device</option>
+            <option value="phone">Cellphone</option>
+            <option value="pad">Pad</option>
+            <option value="pc">Laptop</option>
+            <option value="other">Other</option>
+          </optgroup></select
+        ><br /><br />
+        <label>Device Name:</label>
+        <br />
+        <input
+          type="text"
+          id="device_name"
+          autofocus
+          name="device_name"
+          placeholder="Name"
+        />
+        <br />
+        <br />
+      </div>
+      <!-- Submit Button -->
       <button type="submit" class="button" value="Register">
         <span class="button__text"> Register My Device</span>
       </button>
@@ -169,9 +174,10 @@
             // Confirm registeration
             success: function (data) {
               //undo button loading
-              let btn = document.querySelector(".button");
-              btn.innerHTML = "<div class='button'></div>";
               alert(data);
+              let btn = document.querySelector(".button");
+              btn.innerHTML =
+                "<div class='button'></div><span class='button__text'>Register My Device</span>";
             },
           });
           return false;
