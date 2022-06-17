@@ -11,107 +11,160 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <style>
+      .button {
+        position: relative;
+        padding: 8px 16px;
+        background: #009579;
+        border: none;
+        outline: none;
+        border-radius: 2px;
+        cursor: pointer;
+        place-content: center;
+      }
+      .button:active {
+        background-color: #007a63;
+      }
+      .button__text {
+        font: bold 20px "Quicksand", san-serif;
+        color: #ffffff;
+        transition: all 0.2s;
+      }
+
+      .loader {
+        pointer-events: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 4px solid transparent;
+        border-top-color: #ffffff;
+        animation: an1 1s ease infinite;
+      }
+
+      @keyframes an1 {
+        0% {
+          transform: rotate(0turn);
+        }
+
+        100% {
+          transform: rotate(1turn);
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <form onsubmit="return submitInfo()">
-      <label>Please Register with Your Cellphone:</label><br />
-      <div class="Select">
-        {{form.csrf_token}}
-        <div class="form-group">
-          <label for="dpt"> Department:</label>
-          {{ form.dpt(class="form-control")}}
-        </div>
-        <div class="form-group">
-          <label for="nm"> Name:</label>
-          {{ form.name(class="form-control")}}
-        </div>
-        <script>
-          let dept_select = document.getElementById("dpt");
-          let name_select = document.getElementById("name");
+    <div class="loader">
+      <div></div>
+    </div>
+    <div class="content">
+      <form onsubmit="return submitInfo()">
+        <label>Please Register with Your Cellphone:</label><br />
+        <div class="Select">
+          {{form.csrf_token}}
+          <div class="form-group">
+            <label for="dpt"> Department:</label>
+            {{ form.dpt(class="form-control")}}
+          </div>
+          <div class="form-group">
+            <label for="nm"> Name:</label>
+            {{ form.name(class="form-control")}}
+          </div>
+          <script>
+            let dept_select = document.getElementById("dpt");
+            let name_select = document.getElementById("name");
 
-          dept_select.onchange = function () {
-            dpt_selected = dept_select.value;
-            fetch("/name/" + dpt_selected).then(function (response) {
-              response.json().then(function (data) {
-                let optionHTML = "";
-                for (let name of data.names) {
-                  optionHTML +=
-                    '<option value="' +
-                    name.id +
-                    '">' +
-                    name.name +
-                    "</option>";
-                }
-                <!-- overwrite the old HTML options-->
-                name_select.innerHTML = optionHTML;
+            dept_select.onchange = function () {
+              dpt_selected = dept_select.value;
+              fetch("/name/" + dpt_selected).then(function (response) {
+                response.json().then(function (data) {
+                  let optionHTML = "";
+                  for (let name of data.names) {
+                    optionHTML +=
+                      '<option value="' +
+                      name.id +
+                      '">' +
+                      name.name +
+                      "</option>";
+                  }
+                  <!-- overwrite the old HTML options-->
+                  name_select.innerHTML = optionHTML;
+                });
               });
-            });
+            };
+          </script>
+        </div>
+        <label>Device:</label><br />
+        <select id="device">
+          <optgroup label="Device">
+            <option disable selected>Your Device</option>
+            <option value="phone">Cellphone</option>
+            <option value="pad">Pad</option>
+            <option value="pc">Laptop</option>
+            <option value="other">Other</option>
+          </optgroup></select
+        ><br /><br />
+        <label>Device Name:</label>
+        <br />
+        <input
+          type="text"
+          id="device_name"
+          autofocus
+          name="device_name"
+          placeholder="Name"
+        />
+        <br />
+        <br />
+        <button type="submit" class="button" value="Register">
+          <span class="button__text"> Register My Device</span>
+        </button>
+        <script>
+          let device = document.getElementById("device");
+          device.onchange = function () {
+            document.getElementById("device_name").value =
+              $("#name").find(":selected").text() + "'s " + device.value;
           };
-        </script>
-      </div>
-      <label>Device:</label><br />
-      <select id="device">
-        <optgroup label="Device">
-          <option disable selected>Your Device</option>
-          <option value="phone">Cellphone</option>
-          <option value="pad">Pad</option>
-          <option value="pc">Laptop</option>
-          <option value="other">Other</option>
-        </optgroup></select
-      ><br /><br />
-      <label>Device Name:</label>
-      <br />
-      <input
-        type="text"
-        id="device_name"
-        autofocus
-        name="device_name"
-        placeholder="Name"
-      />
-      <br />
-      <input type="submit" value="Register" />
-      <script>
-        let device = document.getElementById("device");
-        device.onchange = function () {
-          document.getElementById("device_name").value =
-            $("#name").find(":selected").text() + "'s " + device.value;
-        };
-        document.querySelector("form").addEventListener("submit", feedback);
+          document.querySelector("form").addEventListener("submit", feedback);
 
-        function submitInfo() {
-          console.log($("#name").val());
-          console.log($("#device").val());
-          console.log($("#device_name").val());
-          $.ajax({
-            type: "post",
-            url: "/result",
-            data: {
-              name: $("#name").val(),
-              device: $("#device").val(),
-              dev_name: $("#device_name").val(),
-            },
-            success: function (data) {},
-          });
-          return false;
-        }
-
-        function feedback() {
-          // Validate registeration
-          let device = document.querySelector("#device").value;
-          let name = document.querySelector("#device_name").value;
-          const devices = new Set(["phone", "pad", "pc", "other"]);
-          if (!name) {
-            alert("Missing Device Name");
-            return app.send_static_file("index.html");
-          } else if (!devices.has(device)) {
-            alert("Missing Device");
-            return app.send_static_file("index.html");
+          function submitInfo() {
+            console.log($("#name").val());
+            console.log($("#device").val());
+            console.log($("#device_name").val());
+            $.ajax({
+              type: "post",
+              url: "/result",
+              data: {
+                name: $("#name").val(),
+                device: $("#device").val(),
+                dev_name: $("#device_name").val(),
+              },
+              success: function (data) {},
+            });
+            return false;
           }
-          // Confirm registeration
-          alert(" You've successfully registered! ");
-        }
-      </script>
-    </form>
+
+          function feedback() {
+            // Validate registeration
+            let device = document.querySelector("#device").value;
+            let name = document.querySelector("#device_name").value;
+            const devices = new Set(["phone", "pad", "pc", "other"]);
+            if (!name) {
+              alert("Missing Device Name");
+              return app.send_static_file("index.html");
+            } else if (!devices.has(device)) {
+              alert("Missing Device");
+              return app.send_static_file("index.html");
+            }
+            // Confirm registeration
+            let btn = document.querySelector(".button");
+            btn.onclick = function () {
+              this.innerHTML = "<div class='loader'></div>";
+            };
+            alert(" You've successfully registered! ");
+          }
+        </script>
+      </form>
+    </div>
   </body>
 </html>
