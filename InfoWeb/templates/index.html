@@ -15,7 +15,7 @@
       html,
       body {
         height: 100%;
-        background-color: chocolate;
+        background-color: lightgoldenrodyellow;
       }
 
       html {
@@ -186,10 +186,13 @@
 
           if (!name) {
             alert("Missing Name");
+            return 0;
           } else if (!devices.has(device)) {
             alert("Missing Device");
+            return 0;
           } else if (!dname) {
             alert("Missing Device Name");
+            return 0;
           }
           // Button loading
           let btn = document.querySelector(".button");
