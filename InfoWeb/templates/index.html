@@ -12,6 +12,21 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <style>
+      html,
+      body {
+        height: 100%;
+        background-color: chocolate;
+      }
+
+      html {
+        display: table;
+        margin: auto;
+      }
+
+      body {
+        display: table-cell;
+        vertical-align: middle;
+      }
       .button {
         position: relative;
         padding: 8px 16px;
@@ -67,7 +82,7 @@
 
   <body>
     <form onsubmit="return submitInfo()">
-      <label>Please Register with Your Cellphone:</label><br />
+      <label>Please Register with Your Cellphone</label><br />
       <div class="Select">
         {{form.csrf_token}}
         <div class="form-group">
