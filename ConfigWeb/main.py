@@ -1,9 +1,10 @@
 from flask import Flask, request, render_template, session, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 import sys
 sys.path.append("../module")
 from checkpoint import Checkpoints
-from datetime import time, timedelta
+from datetime import datetime, date, time, timedelta
 from config import CheckInSystemConfig, Database
 from db_table import Employee, ClockRecord, Device
 import socket
@@ -22,6 +23,15 @@ Session(app)
 
 # checkpoint
 checkpoints = Checkpoints(db)
+
+def get_valid_dates(db):
+    res = []
+    dates = db.session.query(ClockRecord.rdate, func.sum(ClockRecord.status)).group_by(ClockRecord.rdate).all()
+    for date in dates:
+        if date[1] > 0:
+            res.append(str(date[0]))
+    print(res)
+    return res
 
 
 @app.route("/",methods = ["GET","POST"])
@@ -53,10 +63,11 @@ def authentication(name=None,pwd=None):
 def init():
     if session["name"] == None:
         return redirect("/")
-    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall(),\
+        date = str(date.today()), reportsDate = get_valid_dates(db))
     
 @app.route('/setTime', methods=['POST'])
-def result():
+def setTime():
     """
     Set checkin time and checkout time
 
@@ -65,7 +76,18 @@ def result():
     checkpoints.config = CheckInSystemConfig(request.form["clockin"], request.form["clockout"])
     checkpoints.addTrigger()
     checkpoints.scheduler.print_jobs()
-    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall())
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall(),\
+        date = str(date.today()), reportsDate = get_valid_dates(db))
+
+@app.route('/selectReport', methods=['POST'])
+def selectReport():
+    """
+    Select Report Date
+    """
+    rdate = request.form["reportDate"]
+    print(rdate)
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall(rdate),\
+        date = rdate, reportsDate = get_valid_dates(db))
 
 @app.route("/logout")
 def logout():
@@ -73,4 +95,4 @@ def logout():
     return redirect("/")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9122, debug=True)
+    app.run(host="0.0.0.0", port=9122, debug=False)

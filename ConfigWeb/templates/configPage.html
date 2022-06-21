@@ -3,8 +3,8 @@
 <p>You are logged in as {{ session["name"] }}.<a href="/logout">Log out</a></p>
 <h1>Clockin Config</h1>
 <form action="/setTime" method="POST">
-  <label>ClockIn (Now: {{config.clockinTime.hour}}:00)</label><br />
-  <select name="clockin">
+    <label>ClockIn (Now: {{config.clockinTime.hour}}:00)</label><br />
+    <select name="clockin">
     <optgroup label="clockin">
       <option value="8">8:00</option>
       <option value="9">9:00</option>
@@ -61,7 +61,25 @@
   </tr>
 </table>
 
-<h1>Report: {{reports[0][1]}}</h1>
+<h1>Report: {{ date }}</h1>
+
+<script>
+  function submitDate(){
+    document.getElementById("reportForm").submit();
+  }
+</script>
+
+<form action="/selectReport" method="POST" id = "reportForm">
+  <label>Report Date:</label><br />
+  <select name="reportDate" onchange = "submitDate()">
+    <optgroup label="reportDate">
+      {% for rdate in reportsDate %}
+      <option value= {{ rdate }} {% if rdate == date %} selected {% endif %}>{{ rdate }}</option>
+      {% endfor %}
+    </optgroup></select
+  >
+</form><br/>
+
 <table>
   <tr>
     <th>Name</th>

@@ -85,9 +85,8 @@ class Scanner():
             reportFile.write("----------------------------------------\n")
         reportFile.close()
 
-    def queryall(self):
+    def queryall(self, todayDate = str(date.today())):
         res = []
-        todayDate = str(date.today())
         employeeList = self.db.session.query(Employee).all()
         for employee in employeeList:
             res.append((employee.ename, todayDate, self.query(employee.eid, todayDate)))
@@ -111,7 +110,7 @@ class Scanner():
             if status == 2 and result.status == 0:
                 end_time = result.check_point
                 interval =  (end_time.hour - leave_time.hour) * 60 + end_time.minute - leave_time.minute
-                if interval >= CheckInSystemConfig.REPORT_ALLOWANCE_INTERVAL:
+                if interval > CheckInSystemConfig.REPORT_ALLOWANCE_INTERVAL:
                     res = res + str(end_time) + "; "
                     status = 0
             if status == 2 and result.status == 1:
