@@ -99,18 +99,23 @@ class Scanner():
         results = self.db.session.query(ClockRecord).filter_by(eid = eid, rdate = date).all()
         begin_time = time()
         end_time = time()
+        # status: 1 = clockin; 2 = absent?; 0 = clockout
         for result in results:
             if status == 0 and result.status == 1:
                 begin_time = result.check_point
                 res = res + str(begin_time) + "-"
                 status = 1
             if status == 1 and result.status == 0:
+                leave_time = result.check_point
+                status = 2
+            if status == 2 and result.status == 0:
                 end_time = result.check_point
-                interval =  (end_time.hour - begin_time.hour) * 60 + end_time.minute - begin_time.minute
-                if interval < CheckInSystemConfig.REPORT_ALLOWANCE_INTERVAL:
-                    continue
-                res = res + str(end_time) + "; "
-                status = 0
+                interval =  (end_time.hour - leave_time.hour) * 60 + end_time.minute - leave_time.minute
+                if interval >= CheckInSystemConfig.REPORT_ALLOWANCE_INTERVAL:
+                    res = res + str(end_time) + "; "
+                    status = 0
+            if status == 2 and result.status == 1:
+                status = 1
         return res
 
 
