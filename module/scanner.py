@@ -111,7 +111,7 @@ class Scanner():
                 end_time = result.check_point
                 interval =  (end_time.hour - leave_time.hour) * 60 + end_time.minute - leave_time.minute
                 if interval > CheckInSystemConfig.REPORT_ALLOWANCE_INTERVAL:
-                    res = res + str(end_time) + "; "
+                    res = res + str(leave_time) + "; "
                     status = 0
             if status == 2 and result.status == 1:
                 status = 1
