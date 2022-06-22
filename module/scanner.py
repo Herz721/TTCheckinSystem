@@ -108,16 +108,16 @@ class Scanner():
         #The body and the attachments for the mail
         message.attach(MIMEText(content, 'plain'))
         #Create SMTP session for sending the mail
-        # try:
-        session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
-        session.starttls() #enable security
-        session.login(sender_address, sender_pass) #login with mail_id and password
-        text = message.as_string()
-        session.sendmail(sender_address, receiver_address, text)
-        session.quit()
-        print('Mail Sent!')
-        # except smtplib.SMTPException:
-        #     print ("Error: Mail Sent Failure")
+        try:
+            session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+            session.starttls() #enable security
+            session.login(sender_address, sender_pass) #login with mail_id and password
+            text = message.as_string()
+            session.sendmail(sender_address, receiver_address, text)
+            session.quit()
+            print('Mail Sent!')
+        except smtplib.SMTPException:
+            print ("Error: Mail Sent Failure")
 
 
     
