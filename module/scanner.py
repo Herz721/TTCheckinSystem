@@ -3,7 +3,10 @@ from datetime import datetime, date, time
 import subprocess
 from db_table import Employee, ClockRecord, Device
 import socket
-from config import CheckInSystemConfig
+from config import CheckInSystemConfig, EmailConfig
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 class Scanner():
     def __init__(self, db):
@@ -75,19 +78,53 @@ class Scanner():
         print(checkpoint + ": insert Successfully!")
 
     def create_DailyReport(self):
-        reportFile = open("../daily_reports/" + todayDate + ".txt", "w")
-        reportList = queryall()
-        # report[0]: name; report[1]: date; report[2]: onboard_time
-        for report in reportList:
-            reportFile.write("user_name: " + report[0] + "\n")
-            reportFile.write("date: " + report[1] + "\n")
-            reportFile.write("onboard time: " + report[2] + "\n")
-            reportFile.write("----------------------------------------\n")
-        reportFile.close()
+        todayDate = str(date.today())
+        with open("../daily_reports/" + todayDate + ".txt", "w") as reportFile:
+            reportFile.seek(0)
+            reportFile.truncate()
+            reportList = self.queryall(todayDate)
+            # report[0]: name; report[1]: date; report[2]: onboard_time
+            reportStr = str()
+            for report in reportList:
+                reportStr = reportStr + "user_name: " + report[0] + "\n"
+                reportStr = reportStr + "date: " + report[1] + "\n"
+                reportStr = reportStr + "onboard time: " + report[2] + "\n"
+                reportStr = reportStr + "----------------------------------------\n"
+            reportFile.write(reportStr)
+            reportFile.close()
+            print("Write Successfully!")
+        self.send_email(reportStr, todayDate)
+
+    def send_email(self, content, todayDate):
+        #The mail addresses and password
+        sender_address = EmailConfig.SENDER_ADDR
+        sender_pass = EmailConfig.SENDER_PWD
+        receiver_address = EmailConfig.RECEIVER_ADDR
+        #Setup the MIME
+        message = MIMEMultipart()
+        message['From'] = sender_address
+        message['To'] = receiver_address
+        message['Subject'] = todayDate + '\'s Clockin Report'
+        #The body and the attachments for the mail
+        message.attach(MIMEText(content, 'plain'))
+        #Create SMTP session for sending the mail
+        # try:
+        session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+        session.starttls() #enable security
+        session.login(sender_address, sender_pass) #login with mail_id and password
+        text = message.as_string()
+        session.sendmail(sender_address, receiver_address, text)
+        session.quit()
+        print('Mail Sent!')
+        # except smtplib.SMTPException:
+        #     print ("Error: Mail Sent Failure")
+
+
+    
 
     def queryall(self, todayDate = str(date.today())):
         res = []
-        employeeList = self.db.session.query(Employee).all()
+        employeeList = self.db.session.query(Employee).filter_by(status = "onsite").all()
         for employee in employeeList:
             res.append((employee.ename, todayDate, self.query(employee.eid, todayDate)))
         return res
