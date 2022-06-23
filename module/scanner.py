@@ -103,7 +103,7 @@ class Scanner():
         #Setup the MIME
         message = MIMEMultipart()
         message['From'] = sender_address
-        message['To'] = receiver_address
+        message['To'] = ", ".join(receiver_address)
         message['Subject'] = todayDate + '\'s Clockin Report'
         #The body and the attachments for the mail
         message.attach(MIMEText(content, 'plain'))

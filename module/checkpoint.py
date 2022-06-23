@@ -94,6 +94,7 @@ class Checkpoints:
             trigger = CronTrigger(
                 day_of_week = 'mon-fri',
                 hour = self.config.CREATE_REPORT_TIME
+                # minute = "*/5"
             ),
             id = "create_report",
             replace_existing = True
