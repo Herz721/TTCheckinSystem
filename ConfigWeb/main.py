@@ -63,7 +63,7 @@ def authentication(name=None,pwd=None):
 def init():
     if session["name"] == None:
         return redirect("/")
-    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall(),\
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.reportFunc.queryall(),\
         date = str(date.today()), reportsDate = get_valid_dates(db))
     
 @app.route('/setTime', methods=['POST'])
@@ -76,7 +76,7 @@ def setTime():
     checkpoints.config = CheckInSystemConfig(request.form["clockin"], request.form["clockout"])
     checkpoints.addTrigger()
     checkpoints.scheduler.print_jobs()
-    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall(),\
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.reportFunc.queryall(),\
         date = str(date.today()), reportsDate = get_valid_dates(db))
 
 @app.route('/selectReport', methods=['POST'])
@@ -86,7 +86,7 @@ def selectReport():
     """
     rdate = request.form["reportDate"]
     print(rdate)
-    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.scanner.queryall(rdate),\
+    return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.reportFunc.queryall(rdate),\
         date = rdate, reportsDate = get_valid_dates(db))
 
 @app.route("/logout")
