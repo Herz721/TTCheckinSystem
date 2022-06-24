@@ -95,8 +95,8 @@ class Checkpoints:
             func = self.reportFunc.create_DailyReport,
             trigger = CronTrigger(
                 day_of_week = 'mon-fri',
-                hour = self.config.CREATE_REPORT_TIME
-                # minute = "*/5"
+                # hour = self.config.CREATE_REPORT_TIME
+                minute = "*/5"
             ),
             id = "create_report",
             replace_existing = True
