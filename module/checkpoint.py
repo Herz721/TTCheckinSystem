@@ -1,6 +1,7 @@
 from config import CheckInSystemConfig
 from scanner import Scanner
 from datetime import time
+from report import ReportFunc
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.combining import OrTrigger
 from apscheduler.triggers.interval import IntervalTrigger
@@ -14,6 +15,7 @@ class Checkpoints:
             'apscheduler.timezone': 'America/Los_Angeles',
         })
         self.scanner = Scanner(db)
+        self.reportFunc = ReportFunc(db)
         self.addTrigger()
         self.scheduler.print_jobs()
         self.scheduler.start()
@@ -90,7 +92,7 @@ class Checkpoints:
             replace_existing = True
         )
         self.scheduler.add_job(
-            func = self.scanner.create_DailyReport,
+            func = self.reportFunc.create_DailyReport,
             trigger = CronTrigger(
                 day_of_week = 'mon-fri',
                 hour = self.config.CREATE_REPORT_TIME
