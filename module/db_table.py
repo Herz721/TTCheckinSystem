@@ -52,4 +52,18 @@ class Device(Base):
         self.dev_name = dev_name
         self.eid = eid
 
+class Leaverecord(Base):
+    __tablename__ = 'leaverecord'
+
+    eid = Column(ForeignKey('employee.eid', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
+    sdate = Column(Date, primary_key=True, nullable=False)
+    leave_reason = Column(String(512))
+
+    employee = relationship('Employee')
+
+    def __init__(self, eid, sdate, leave_reason):
+        self.eid = eid
+        self.sdate = sdate
+        self.leave_reason = leave_reason
+
 

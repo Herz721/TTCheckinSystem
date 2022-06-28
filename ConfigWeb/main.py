@@ -6,7 +6,7 @@ sys.path.append("../module")
 from checkpoint import Checkpoints
 from datetime import datetime, date, time, timedelta
 from config import CheckInSystemConfig, Database
-from db_table import Employee, ClockRecord, Device
+from db_table import Employee, ClockRecord, Device, Leaverecord
 import socket
 from flask_session import Session
 
@@ -79,6 +79,16 @@ def setTime():
     return render_template("configPage.html", config = checkpoints.config, reports = checkpoints.reportFunc.queryall(),\
         date = str(date.today()), reportsDate = get_valid_dates(db))
 
+@app.route('/LeaveRequest', methods=['POST', 'GET'])
+def addRequest():
+    eid = request.form['eid']
+    reason = request.form['reason']
+    lrecord = Leaverecord(eid, date.today(), reason)
+    db.session.add(lrecord)
+    db.session.commit()
+    db.session.flush()
+    return reason
+
 @app.route('/selectReport', methods=['POST'])
 def selectReport():
     """
@@ -95,4 +105,4 @@ def logout():
     return redirect("/")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9122, debug=False)
+    app.run(host="0.0.0.0", port=9122, debug=True)

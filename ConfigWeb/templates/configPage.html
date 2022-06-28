@@ -67,6 +67,27 @@
   function submitDate(){
     document.getElementById("reportForm").submit();
   }
+
+  $(document).ready(function(){
+    $("#ReportTable").on('click','.btnRequest',function(){
+        var currentRow = $(this).closest("tr"); 
+        var eid = currentRow.find("td:eq(0)").text();
+        var reason = currentRow.find("input").val();
+        $.ajax({
+            type: "post",
+            url: "/LeaveRequest",
+            data: {
+                "eid": eid,
+                "reason": reason,
+            },
+            success: function(data) {
+              currentRow.find("td:eq(2)").html("<b>LEAVE</b>");
+              currentRow.find("td:eq(3)").html(data);
+              alert("Success!")
+            }
+        });
+    });
+  });
 </script>
 
 <form action="/selectReport" method="POST" id = "reportForm">
@@ -80,15 +101,31 @@
   >
 </form><br/>
 
-<table>
+<table id="ReportTable">
   <tr>
+    <th>EID</th>
     <th>Name</th>
     <th>Onboard Time</th>
+    <th>Leave Reason</th>
+    <th>Leave Request</th>
   </tr>
   {% for report in reports %}
   <tr>
     <td>{{ report[0] }}</td>
-    <td>{{ report[2] }}</td>
+    <td>{{ report[1] }}</td>
+    {% if report[3] == None %}
+      <td>{{ report[2] }}</td>
+      <td>
+        <input type="text">
+      </td>
+      <td>
+        <button class="btnRequest">Request</button>
+      </td>
+    {% endif %}
+    {% if report[3] != None %}
+      <td><b>LEAVE</b></td>
+      <td>{{ report[3] }}</td>
+    {% endif %}
   </tr>
   {% endfor %}
 </table>

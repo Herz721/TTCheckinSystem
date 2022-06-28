@@ -3,7 +3,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, date, time
 from config import CheckInSystemConfig, EmailConfig
-from db_table import Employee, ClockRecord, Device
+from db_table import Employee, ClockRecord, Device, Leaverecord
 
 class ReportFunc():
     def __init__(self, db):
@@ -27,19 +27,23 @@ class ReportFunc():
             print("Write Successfully!")
         self.send_email(reportStr, todayDate)
 
+    def create_Summary(self):
+        
+
+
     def send_email(self, content, todayDate):
         #The mail addresses and password
         sender_address = EmailConfig.SENDER_ADDR
         sender_pass = EmailConfig.SENDER_PWD
         receiver_address = EmailConfig.RECEIVER_ADDR
-        #Setup the MIME
+        # Setup the MIME
         message = MIMEMultipart()
         message['From'] = sender_address
         message['To'] = ", ".join(receiver_address)
         message['Subject'] = todayDate + '\'s Clockin Report'
-        #The body and the attachments for the mail
+        # The body and the attachments for the mail
         message.attach(MIMEText(content, 'plain'))
-        #Create SMTP session for sending the mail
+        # Create SMTP session for sending the mail
         try:
             session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
             session.starttls() #enable security
@@ -53,9 +57,10 @@ class ReportFunc():
 
     def queryall(self, todayDate = str(date.today())):
         res = []
-        employeeList = self.db.session.query(Employee).filter_by(status = "onsite").all()
+        employeeList = self.db.session.query(Employee.eid, Employee.ename, Leaverecord.leave_reason, Leaverecord.sdate).outerjoin(Leaverecord)\
+            .filter(Employee.status == "onsite").filter((Leaverecord.sdate == date.today()) | (Leaverecord.sdate == None)).all()
         for employee in employeeList:
-            res.append((employee.ename, todayDate, self.query(employee.eid, todayDate)))
+                res.append((employee.eid, employee.ename, self.query(employee.eid, todayDate), employee.leave_reason))
         return res
 
     def query(self, eid, date):
