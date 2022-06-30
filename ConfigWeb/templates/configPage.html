@@ -83,6 +83,7 @@
             success: function(data) {
               currentRow.find("td:eq(2)").html("<b>LEAVE</b>");
               currentRow.find("td:eq(3)").html(data);
+              currentRow.find("td:eq(4)").hide()
               alert("Success!")
             }
         });
