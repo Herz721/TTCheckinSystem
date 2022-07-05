@@ -111,4 +111,9 @@ def wsgi_app(testing: bool = True):
         session["name"] = None
         return redirect("/")
 
+<<<<<<< HEAD
     return app
+=======
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9122, debug=False)
+>>>>>>> 2fced5efb522d8252d6c856e57c43f883857f6ca
