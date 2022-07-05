@@ -26,11 +26,7 @@ class ReportFunc():
             reportFile.close()
             print("Write Successfully!")
         self.send_email(reportStr, todayDate)
-
-    def create_Summary(self):
         
-
-
     def send_email(self, content, todayDate):
         #The mail addresses and password
         sender_address = EmailConfig.SENDER_ADDR
